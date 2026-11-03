@@ -129,6 +129,8 @@ Public Function Run() As String
     Compare "let x=2;let f=fun(){x+=3;return @(x*2);};return f()+x;", False
     Compare "let n=0;fun arg(){n+=1;return n;};let f=fun(x){return x;};return f(arg())*10+n;", False
     Compare "let f=fun(n){if(n==0){return 1/0;};f(0);return n;};return f(7);", False
+    Compare "let __option_base='x';let f=fun(...r){return r.length;};return f(1)??7;", False
+    Compare "let __option_base='x';let o={f:fun(...r){return r.length;}};return o.f(1)??7;", False
     ExtraChecks
     Run = CStr(checks)
     Exit Function

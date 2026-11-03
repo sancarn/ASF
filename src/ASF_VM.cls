@@ -8566,12 +8566,17 @@ Friend Function FastEnterCall(ByVal callNode As ASF_Map, ByVal args As Collectio
         End If
         Exit Function
     End If
+    On Error GoTo BindingError
     Set machine = ScopeBody(body)
     PushCallTrace traceName, args
     env.Push
     FastBindCall env, pa, restName, args
     scopeEntries = scopeEntries + 1
     FastEnterCall = True
+    Exit Function
+BindingError:
+    FastBindingError traceName, Err.Description
+    Err.Clear: result = Empty
 End Function
 Private Sub FastBindCall(ByVal env As ASF_ScopeStack, ByVal pa As Variant, ByVal restParamName As String, ByVal evaluatedArgs As Collection)
     Dim i As Long
@@ -8646,6 +8651,11 @@ Friend Sub FastLeaveCall(ByVal env As ASF_ScopeStack, ByVal name As String, ByRe
     If Len(name) > 0 Then PopCallTrace name, value
     ' InvokeClosure retains its frame on failure; captured envs observe that frame.
     If Not failed Then env.Pop
+End Sub
+Private Sub FastBindingError(ByVal name As String, ByVal description As String)
+    TraceError name, description
+    If VERBOSE_ Then GLOBALS_.gRuntimeLog.Add "InvokeClosure error: " & description
+    PopCallTrace name, Empty
 End Sub
 Friend Sub FastCallError(ByVal name As String, ByVal description As String)
     TraceError name, description
@@ -8769,6 +8779,7 @@ Friend Function FastEnterMember(ByVal node As ASF_Map, ByVal args As Collection,
                         If method.Exists("name") Then traceName = CStr(method.GetValue("name"))
                         Dim rest As String
                         If method.Exists("restParam") Then rest = CStr(method.GetValue("restParam"))
+                        On Error GoTo BindingError
                         PushCallTrace traceName, args
                         env.Push: FastBindCall env, method.GetValue("params"), rest, args
                         env.SetLocalValue "this", value
@@ -8781,6 +8792,10 @@ Friend Function FastEnterMember(ByVal node As ASF_Map, ByVal args As Collection,
     End If
     scopeServices = scopeServices + 1
     vAssignment result, EvalCall(node, caller, methodID, args)
+    Exit Function
+BindingError:
+    FastBindingError traceName, Err.Description
+    Err.Clear: result = Empty
 End Function
 Private Function FastOpenMethod(ByVal bound As ASF_Map, ByVal args As Collection, ByVal caller As ASF_ScopeStack, ByRef machine As ASF_FastVM, ByRef env As ASF_ScopeStack, ByRef traceName As String) As Boolean
     Dim method As ASF_Map: Set method = bound.GetValue("method")
@@ -8788,12 +8803,17 @@ Private Function FastOpenMethod(ByVal bound As ASF_Map, ByVal args As Collection
     Set machine = ScopeBody(body): Set env = caller.ShareFrames
     traceName = "<method>"
     If method.Exists("name") Then traceName = CStr(method.GetValue("name"))
+    On Error GoTo BindingError
     PushCallTrace traceName, args
     env.Push: env.SetLocalValue "this", bound.GetValue("instance")
     Dim params As New Collection
     If method.Exists("params") Then Set params = method.GetValue("params")
     FastBindCall env, params, vbNullString, args
     scopeEntries = scopeEntries + 1: FastOpenMethod = True
+    Exit Function
+BindingError:
+    ' This fast route is selected only with verbose/call tracing disabled.
+    Err.Clear
 End Function
 ' END FAST BYTECODE BACKEND
 

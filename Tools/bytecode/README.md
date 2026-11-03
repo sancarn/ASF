@@ -116,7 +116,7 @@ limit; ordinary validation has 240 seconds. Test defaults change only in the
 imported temporary copies. Scope-route checks require actual bytecode entries
 and zero whole-program fallbacks.
 
-Validation covers 188 targeted bytecode assertions, 473 Variant/log/reentry
+Validation covers 192 targeted bytecode assertions, 473 Variant/log/reentry
 checks against the AST and 725 native regression assertions. Each of the three
 engines passes 254 of 255 upstream tests. The known nested-array host-expression
 failure (`host_sees_array_mutation`, expected 42 / actual 8) reproduces on the
@@ -124,7 +124,7 @@ original source with only its necessary private ByVal compile repair. It is not
 suppressed. Upstream bytecode invocation routes are 50 compact / 209 scoped /
 0 fallback / 1 invalid-program call. Additional checks include escaped closures
 across runs, finalizer timing and default-property call counts, exception-frame
-behavior, cache stability, 1,000-deep direct closure calls and 500-deep methods.
+and parameter-binding error behavior, cache stability, 1,000-deep direct closure calls and 500-deep methods.
 
 The benchmark includes eight earlier thunk workloads, all eleven upstream
 `AsfBench` workloads (three intentionally overlap), and three synthetic
