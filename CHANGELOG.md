@@ -4,6 +4,28 @@ All notable changes for ASF. This file combines the release notes from the proje
 
 ## [Unreleased]
 
+### 2026-11-03: experimental native VM
+
+- **WIP**: opt-in `ASF.NativeExecution` Windows VBA7 x64 backend. Lowers the AST
+  to compact instructions; embedded C handles dispatch, branches, loops and
+  finite-Double arithmetic, with VBA bridges for ASF/COM services. The VBA AST
+  evaluator remains the default. `NativeEntryCount` verifies native routing;
+  `ClearNativeCache` invalidates lowering after external AST mutation.
+- **Installation change**: upgrading `ASF`/`ASF_VM` now also requires importing
+  `ASF_Thunk.cls` and `ASF_ThunkProgram.cls`, including when native mode is off.
+  Existing callers keep their Run/Compile APIs and defaults. No external DLL is
+  distributed. Native mode raises error 5 on unsupported hosts; the LibreOffice
+  builder excludes it and retains its portable AST runtime.
+- **FIX**: the private `InvokeClosure` body Collection parameter is ByVal so a
+  Variant array element can be passed from the named-function path in Excel.
+  The Collection itself remains shared; the parameter was never reassigned.
+- **DEV**: reproducible relocation-checked C build, native ABI/control tests,
+  isolated Excel supervisor following stdVBA's Office guidance, 723 additional
+  assertions and comparison of the existing suite against VBA. Both engines pass
+  254/255 original tests; the remaining nested-array VBAExpressions failure also
+  occurs in pre-change source and is explicitly recorded, not counted as passing.
+
+
 ## Highlights
 
 - **Added**

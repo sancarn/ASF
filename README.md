@@ -128,6 +128,8 @@ This transforms VBA Collections into JavaScript-like arrays with:
    - `ASF.cls` (main engine)
    - `ASF_Compiler.cls`
    - `ASF_VM.cls`
+   - `ASF_Thunk.cls`
+   - `ASF_ThunkProgram.cls`
    - `ASF_Parser.cls`
    - `ASF_Globals.cls`
    - `ASF_ScopeStack.cls`
@@ -137,6 +139,14 @@ This transforms VBA Collections into JavaScript-like arrays with:
    - `VBAcallBack.cls`
    - `VBAexpressions.cls`
    - `VBAexpressionsScope.cls`
+
+### Experimental native execution
+
+Windows x64 Office users can opt in with `engine.NativeExecution = True` before
+`Run` or `Execute`. ASF still parses to an AST; the experimental backend lowers
+that AST to instructions executed by an embedded C thunk, with VBA host bridges.
+The default remains the VBA engine. Import both new thunk classes even when
+using VBA mode. See [architecture, build, testing and limitations](Tools/thunk/README.md).
 
 ### Step 2: Hello World
 
