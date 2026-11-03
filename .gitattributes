@@ -12,3 +12,4 @@ libreoffice/tools/build.py text eol=crlf
 Tools/thunk/** text eol=crlf
 Tools/thunk/*.cls -text
 Tools/thunk/*.bas -text
+.gitattributes text eol=crlf
