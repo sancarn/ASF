@@ -133,3 +133,33 @@ No LibreOffice runtime benchmark or 32-bit Office validation is claimed.
 
 See `results/2026-11-03/report.html`, `samples.csv`, `summary.json` and
 `results.json` for measured times, routing, raw samples and source hashes.
+
+## Measured result on 3 November 2026
+
+The committed implementation (`7d2971e`) was measured in Excel 16 x64 build
+20618. The 22 workloads produced 1,386 main samples plus 84 ablation samples.
+17 workloads lowered; five used whole-program fallback. Warm median results:
+
+- Upstream arithmetic loop: bytecode 15.92x, thunk 1.09x versus AST.
+- Recursive calls: bytecode 28.63x, thunk 0.87x.
+- Template strings: bytecode 18.56x, thunk 0.58x.
+- Object/nested-array writes: bytecode 1.37-1.42x; host services dominate.
+- Closures, array callbacks, classes and the payroll filter/reduce pipeline:
+  fallback, approximately AST speed. These are not bytecode gains.
+
+The combined optimization switch adds about 13-14% to the two scalar loops in
+the ablation, but the small-object workloads are 5-6% slower with it enabled.
+Map position caching is not automatically a win for tiny objects. The large
+AST-to-bytecode improvement chiefly supports avoiding AST/Map dispatch and
+recursive VBA function invocation; these measurements do not isolate each
+mechanism's causal contribution. The C thunk alone does not deliver the same
+improvement on these workloads. Cold construction/first-run results are reported
+separately in the interactive chart; warm results must not be applied to one-shot
+scripts.
+
+Validation passed 148 targeted checks plus 723 existing native regression
+assertions. Each mode passed 254/255 upstream tests with the same known baseline
+failure. Of 260 instrumented upstream calls, 50 executed bytecode, 209 fell back,
+and one had no valid program. Trace/verbose requests account for 102 fallbacks.
+All original Office settings were verified restored. LibreOffice packaging
+builds (10 AST modules); its runtime was unavailable locally.
