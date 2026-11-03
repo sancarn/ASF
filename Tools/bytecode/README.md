@@ -124,7 +124,8 @@ original source with only its necessary private ByVal compile repair. It is not
 suppressed. Upstream bytecode invocation routes are 50 compact / 209 scoped /
 0 fallback / 1 invalid-program call. Additional checks include escaped closures
 across runs, finalizer timing and default-property call counts, exception-frame
-and parameter-binding error behavior, cache stability, 1,000-deep direct closure calls and 500-deep methods.
+and parameter-binding error behavior, cache stability, 1,000-deep direct closure
+calls and 500-deep methods.
 
 The benchmark includes eight earlier thunk workloads, all eleven upstream
 `AsfBench` workloads (three intentionally overlap), and three synthetic
@@ -136,6 +137,13 @@ Variant locals materialize ParamArray arguments identically in all engines.
 The ablation toggles folding/fusion/map caching together; it cannot identify
 individual optimization effects. Results are descriptive measurements on one
 host, not a cross-host or statistical performance guarantee.
+
+On this host, warm compact bytecode improves the upstream arithmetic loop
+16.71x, recursive calls 28.17x and template literals 20.00x versus AST. Scope
+bytecode does not improve these measured feature workloads: closure speedup is
+0.91x, classes 0.86x, array methods 0.75x and the small payroll pipeline 0.46x
+(about 2.18x as long as AST). Feature coverage therefore does not imply a
+performance win. The report separates these routes and cold startup costs.
 
 The new results are in `results/2026-11-03-scope/`: interactive `report.html`,
 `samples.csv`, `summary.json`, `results.json`, logs and setting-restoration records.
