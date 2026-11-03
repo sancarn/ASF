@@ -4,6 +4,13 @@ All notable changes for ASF. This file combines the release notes from the proje
 
 ## [Unreleased]
 
+### 2026-11-03: native/VBA benchmark branch
+
+- **DEV**: eight-workload Excel benchmark with three phases, seven rotating
+  rounds, validated answers/routing, QPC timings, raw samples and an interactive
+  HTML report. Native warm loops improve in this run; six other workloads and
+  cold construction/compilation cost more. See `Tools/thunk/benchmark/README.md`.
+
 ### 2026-11-03: experimental native VM
 
 - **WIP**: opt-in `ASF.NativeExecution` Windows VBA7 x64 backend. Lowers the AST

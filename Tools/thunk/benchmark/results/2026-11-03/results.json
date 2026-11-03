@@ -1,0 +1,2769 @@
+{
+  "office": {
+    "version": "16.0",
+    "build": 20618.0,
+    "os": "Windows (64-bit) NT 10.00"
+  },
+  "smoke": "35:2",
+  "regression_checks": 723,
+  "vba": "254/255/1",
+  "native": "254/255/1",
+  "known_baseline_failures": [
+    "FAIL host_VBA_Expressions/host_sees_array_mutation: Expected String <42>, actual String <8>"
+  ],
+  "benchmark": {
+    "cases": [
+      "Arithmetic",
+      "Predicate",
+      "Strings",
+      "COM collection",
+      "For loop",
+      "While + branches",
+      "Fibonacci",
+      "Array callback"
+    ],
+    "phases": [
+      "Create + compile",
+      "Create + compile + first run",
+      "Warm run"
+    ],
+    "samples": [
+      {
+        "round": 0,
+        "case": 0,
+        "phase": 0,
+        "engine": 0,
+        "count": 128,
+        "seconds": 0.0578425000421703
+      },
+      {
+        "round": 0,
+        "case": 0,
+        "phase": 0,
+        "engine": 1,
+        "count": 64,
+        "seconds": 0.0497335999971256
+      },
+      {
+        "round": 0,
+        "case": 0,
+        "phase": 1,
+        "engine": 1,
+        "count": 32,
+        "seconds": 0.0293207999784499
+      },
+      {
+        "round": 0,
+        "case": 0,
+        "phase": 1,
+        "engine": 0,
+        "count": 64,
+        "seconds": 0.0337339000543579
+      },
+      {
+        "round": 0,
+        "case": 0,
+        "phase": 2,
+        "engine": 0,
+        "count": 512,
+        "seconds": 0.0368273999774829
+      },
+      {
+        "round": 0,
+        "case": 0,
+        "phase": 2,
+        "engine": 1,
+        "count": 512,
+        "seconds": 0.039901899988763
+      },
+      {
+        "round": 0,
+        "case": 1,
+        "phase": 0,
+        "engine": 1,
+        "count": 64,
+        "seconds": 0.0446454000193626
+      },
+      {
+        "round": 0,
+        "case": 1,
+        "phase": 0,
+        "engine": 0,
+        "count": 128,
+        "seconds": 0.0516174000222236
+      },
+      {
+        "round": 0,
+        "case": 1,
+        "phase": 1,
+        "engine": 0,
+        "count": 64,
+        "seconds": 0.0298289000056684
+      },
+      {
+        "round": 0,
+        "case": 1,
+        "phase": 1,
+        "engine": 1,
+        "count": 32,
+        "seconds": 0.028804500005208
+      },
+      {
+        "round": 0,
+        "case": 1,
+        "phase": 2,
+        "engine": 1,
+        "count": 512,
+        "seconds": 0.0365852999966592
+      },
+      {
+        "round": 0,
+        "case": 1,
+        "phase": 2,
+        "engine": 0,
+        "count": 512,
+        "seconds": 0.0348047000588849
+      },
+      {
+        "round": 0,
+        "case": 2,
+        "phase": 0,
+        "engine": 0,
+        "count": 128,
+        "seconds": 0.0564864000771195
+      },
+      {
+        "round": 0,
+        "case": 2,
+        "phase": 0,
+        "engine": 1,
+        "count": 64,
+        "seconds": 0.049146700068377
+      },
+      {
+        "round": 0,
+        "case": 2,
+        "phase": 1,
+        "engine": 1,
+        "count": 32,
+        "seconds": 0.0382347999839112
+      },
+      {
+        "round": 0,
+        "case": 2,
+        "phase": 1,
+        "engine": 0,
+        "count": 64,
+        "seconds": 0.0400236001005396
+      },
+      {
+        "round": 0,
+        "case": 2,
+        "phase": 2,
+        "engine": 0,
+        "count": 256,
+        "seconds": 0.0399357000133023
+      },
+      {
+        "round": 0,
+        "case": 2,
+        "phase": 2,
+        "engine": 1,
+        "count": 128,
+        "seconds": 0.0327810000162572
+      },
+      {
+        "round": 0,
+        "case": 3,
+        "phase": 0,
+        "engine": 1,
+        "count": 64,
+        "seconds": 0.0450778999365866
+      },
+      {
+        "round": 0,
+        "case": 3,
+        "phase": 0,
+        "engine": 0,
+        "count": 128,
+        "seconds": 0.048572100000456
+      },
+      {
+        "round": 0,
+        "case": 3,
+        "phase": 1,
+        "engine": 0,
+        "count": 64,
+        "seconds": 0.0351495000068098
+      },
+      {
+        "round": 0,
+        "case": 3,
+        "phase": 1,
+        "engine": 1,
+        "count": 32,
+        "seconds": 0.0297988000093028
+      },
+      {
+        "round": 0,
+        "case": 3,
+        "phase": 2,
+        "engine": 1,
+        "count": 256,
+        "seconds": 0.0404330999590456
+      },
+      {
+        "round": 0,
+        "case": 3,
+        "phase": 2,
+        "engine": 0,
+        "count": 256,
+        "seconds": 0.0318356999196112
+      },
+      {
+        "round": 0,
+        "case": 4,
+        "phase": 0,
+        "engine": 0,
+        "count": 32,
+        "seconds": 0.0325551000423729
+      },
+      {
+        "round": 0,
+        "case": 4,
+        "phase": 0,
+        "engine": 1,
+        "count": 32,
+        "seconds": 0.0408681000117213
+      },
+      {
+        "round": 0,
+        "case": 4,
+        "phase": 1,
+        "engine": 1,
+        "count": 1,
+        "seconds": 0.0833901999285445
+      },
+      {
+        "round": 0,
+        "case": 4,
+        "phase": 1,
+        "engine": 0,
+        "count": 1,
+        "seconds": 0.0849362999433652
+      },
+      {
+        "round": 0,
+        "case": 4,
+        "phase": 2,
+        "engine": 0,
+        "count": 1,
+        "seconds": 0.0821512000402436
+      },
+      {
+        "round": 0,
+        "case": 4,
+        "phase": 2,
+        "engine": 1,
+        "count": 1,
+        "seconds": 0.0729219999630004
+      },
+      {
+        "round": 0,
+        "case": 5,
+        "phase": 0,
+        "engine": 1,
+        "count": 32,
+        "seconds": 0.0540662000421435
+      },
+      {
+        "round": 0,
+        "case": 5,
+        "phase": 0,
+        "engine": 0,
+        "count": 32,
+        "seconds": 0.0437407999997959
+      },
+      {
+        "round": 0,
+        "case": 5,
+        "phase": 1,
+        "engine": 0,
+        "count": 1,
+        "seconds": 0.0475900999736041
+      },
+      {
+        "round": 0,
+        "case": 5,
+        "phase": 1,
+        "engine": 1,
+        "count": 1,
+        "seconds": 0.0345429999288172
+      },
+      {
+        "round": 0,
+        "case": 5,
+        "phase": 2,
+        "engine": 1,
+        "count": 1,
+        "seconds": 0.0313730000052601
+      },
+      {
+        "round": 0,
+        "case": 5,
+        "phase": 2,
+        "engine": 0,
+        "count": 1,
+        "seconds": 0.0522580998949707
+      },
+      {
+        "round": 0,
+        "case": 6,
+        "phase": 0,
+        "engine": 0,
+        "count": 32,
+        "seconds": 0.0316215000348166
+      },
+      {
+        "round": 0,
+        "case": 6,
+        "phase": 0,
+        "engine": 1,
+        "count": 32,
+        "seconds": 0.0413748999126256
+      },
+      {
+        "round": 0,
+        "case": 6,
+        "phase": 1,
+        "engine": 1,
+        "count": 1,
+        "seconds": 0.10382300009951
+      },
+      {
+        "round": 0,
+        "case": 6,
+        "phase": 1,
+        "engine": 0,
+        "count": 1,
+        "seconds": 0.0844931999454275
+      },
+      {
+        "round": 0,
+        "case": 6,
+        "phase": 2,
+        "engine": 0,
+        "count": 1,
+        "seconds": 0.0826448999578133
+      },
+      {
+        "round": 0,
+        "case": 6,
+        "phase": 2,
+        "engine": 1,
+        "count": 1,
+        "seconds": 0.108990699984133
+      },
+      {
+        "round": 0,
+        "case": 7,
+        "phase": 0,
+        "engine": 1,
+        "count": 32,
+        "seconds": 0.038723099976778
+      },
+      {
+        "round": 0,
+        "case": 7,
+        "phase": 0,
+        "engine": 0,
+        "count": 64,
+        "seconds": 0.0530835000099614
+      },
+      {
+        "round": 0,
+        "case": 7,
+        "phase": 1,
+        "engine": 0,
+        "count": 2,
+        "seconds": 0.0390089000575244
+      },
+      {
+        "round": 0,
+        "case": 7,
+        "phase": 1,
+        "engine": 1,
+        "count": 2,
+        "seconds": 0.0422955999383703
+      },
+      {
+        "round": 0,
+        "case": 7,
+        "phase": 2,
+        "engine": 1,
+        "count": 2,
+        "seconds": 0.0386473999824375
+      },
+      {
+        "round": 0,
+        "case": 7,
+        "phase": 2,
+        "engine": 0,
+        "count": 2,
+        "seconds": 0.0359598000068218
+      },
+      {
+        "round": 1,
+        "case": 0,
+        "phase": 0,
+        "engine": 1,
+        "count": 64,
+        "seconds": 0.0468950000358745
+      },
+      {
+        "round": 1,
+        "case": 0,
+        "phase": 0,
+        "engine": 0,
+        "count": 128,
+        "seconds": 0.0536626999964938
+      },
+      {
+        "round": 1,
+        "case": 0,
+        "phase": 1,
+        "engine": 0,
+        "count": 64,
+        "seconds": 0.0321974999969825
+      },
+      {
+        "round": 1,
+        "case": 0,
+        "phase": 1,
+        "engine": 1,
+        "count": 32,
+        "seconds": 0.0277363000204787
+      },
+      {
+        "round": 1,
+        "case": 0,
+        "phase": 2,
+        "engine": 1,
+        "count": 512,
+        "seconds": 0.0396795000415295
+      },
+      {
+        "round": 1,
+        "case": 0,
+        "phase": 2,
+        "engine": 0,
+        "count": 512,
+        "seconds": 0.0359231000766158
+      },
+      {
+        "round": 1,
+        "case": 1,
+        "phase": 0,
+        "engine": 0,
+        "count": 128,
+        "seconds": 0.0487033999525011
+      },
+      {
+        "round": 1,
+        "case": 1,
+        "phase": 0,
+        "engine": 1,
+        "count": 64,
+        "seconds": 0.0446034000487998
+      },
+      {
+        "round": 1,
+        "case": 1,
+        "phase": 1,
+        "engine": 1,
+        "count": 32,
+        "seconds": 0.0268332000123337
+      },
+      {
+        "round": 1,
+        "case": 1,
+        "phase": 1,
+        "engine": 0,
+        "count": 64,
+        "seconds": 0.0303164999932051
+      },
+      {
+        "round": 1,
+        "case": 1,
+        "phase": 2,
+        "engine": 0,
+        "count": 512,
+        "seconds": 0.0343866000184789
+      },
+      {
+        "round": 1,
+        "case": 1,
+        "phase": 2,
+        "engine": 1,
+        "count": 512,
+        "seconds": 0.0363674000836909
+      },
+      {
+        "round": 1,
+        "case": 2,
+        "phase": 0,
+        "engine": 1,
+        "count": 64,
+        "seconds": 0.0467588999308646
+      },
+      {
+        "round": 1,
+        "case": 2,
+        "phase": 0,
+        "engine": 0,
+        "count": 128,
+        "seconds": 0.0568990999599919
+      },
+      {
+        "round": 1,
+        "case": 2,
+        "phase": 1,
+        "engine": 0,
+        "count": 64,
+        "seconds": 0.0371991000138223
+      },
+      {
+        "round": 1,
+        "case": 2,
+        "phase": 1,
+        "engine": 1,
+        "count": 32,
+        "seconds": 0.0344015998998657
+      },
+      {
+        "round": 1,
+        "case": 2,
+        "phase": 2,
+        "engine": 1,
+        "count": 128,
+        "seconds": 0.0319344999734312
+      },
+      {
+        "round": 1,
+        "case": 2,
+        "phase": 2,
+        "engine": 0,
+        "count": 256,
+        "seconds": 0.0379256999585778
+      },
+      {
+        "round": 1,
+        "case": 3,
+        "phase": 0,
+        "engine": 0,
+        "count": 128,
+        "seconds": 0.0486258999444544
+      },
+      {
+        "round": 1,
+        "case": 3,
+        "phase": 0,
+        "engine": 1,
+        "count": 64,
+        "seconds": 0.0441512999823317
+      },
+      {
+        "round": 1,
+        "case": 3,
+        "phase": 1,
+        "engine": 1,
+        "count": 32,
+        "seconds": 0.030003400053829
+      },
+      {
+        "round": 1,
+        "case": 3,
+        "phase": 1,
+        "engine": 0,
+        "count": 64,
+        "seconds": 0.0329050000291318
+      },
+      {
+        "round": 1,
+        "case": 3,
+        "phase": 2,
+        "engine": 0,
+        "count": 256,
+        "seconds": 0.031681300024502
+      },
+      {
+        "round": 1,
+        "case": 3,
+        "phase": 2,
+        "engine": 1,
+        "count": 256,
+        "seconds": 0.0421896999469027
+      },
+      {
+        "round": 1,
+        "case": 4,
+        "phase": 0,
+        "engine": 1,
+        "count": 32,
+        "seconds": 0.0402619000524282
+      },
+      {
+        "round": 1,
+        "case": 4,
+        "phase": 0,
+        "engine": 0,
+        "count": 32,
+        "seconds": 0.0304527000989765
+      },
+      {
+        "round": 1,
+        "case": 4,
+        "phase": 1,
+        "engine": 0,
+        "count": 1,
+        "seconds": 0.081437399960123
+      },
+      {
+        "round": 1,
+        "case": 4,
+        "phase": 1,
+        "engine": 1,
+        "count": 1,
+        "seconds": 0.0815765999723226
+      },
+      {
+        "round": 1,
+        "case": 4,
+        "phase": 2,
+        "engine": 1,
+        "count": 1,
+        "seconds": 0.0743901999667287
+      },
+      {
+        "round": 1,
+        "case": 4,
+        "phase": 2,
+        "engine": 0,
+        "count": 1,
+        "seconds": 0.0778411999344826
+      },
+      {
+        "round": 1,
+        "case": 5,
+        "phase": 0,
+        "engine": 0,
+        "count": 32,
+        "seconds": 0.0420460000168532
+      },
+      {
+        "round": 1,
+        "case": 5,
+        "phase": 0,
+        "engine": 1,
+        "count": 32,
+        "seconds": 0.0524527999805287
+      },
+      {
+        "round": 1,
+        "case": 5,
+        "phase": 1,
+        "engine": 1,
+        "count": 1,
+        "seconds": 0.0325944001087919
+      },
+      {
+        "round": 1,
+        "case": 5,
+        "phase": 1,
+        "engine": 0,
+        "count": 1,
+        "seconds": 0.0510811000131071
+      },
+      {
+        "round": 1,
+        "case": 5,
+        "phase": 2,
+        "engine": 0,
+        "count": 1,
+        "seconds": 0.0459137000143528
+      },
+      {
+        "round": 1,
+        "case": 5,
+        "phase": 2,
+        "engine": 1,
+        "count": 1,
+        "seconds": 0.0310983000090346
+      },
+      {
+        "round": 1,
+        "case": 6,
+        "phase": 0,
+        "engine": 1,
+        "count": 32,
+        "seconds": 0.0412111999467015
+      },
+      {
+        "round": 1,
+        "case": 6,
+        "phase": 0,
+        "engine": 0,
+        "count": 32,
+        "seconds": 0.0302469000453129
+      },
+      {
+        "round": 1,
+        "case": 6,
+        "phase": 1,
+        "engine": 0,
+        "count": 1,
+        "seconds": 0.0883560999063775
+      },
+      {
+        "round": 1,
+        "case": 6,
+        "phase": 1,
+        "engine": 1,
+        "count": 1,
+        "seconds": 0.0981618999503553
+      },
+      {
+        "round": 1,
+        "case": 6,
+        "phase": 2,
+        "engine": 1,
+        "count": 1,
+        "seconds": 0.0971828000620008
+      },
+      {
+        "round": 1,
+        "case": 6,
+        "phase": 2,
+        "engine": 0,
+        "count": 1,
+        "seconds": 0.0800721999257803
+      },
+      {
+        "round": 1,
+        "case": 7,
+        "phase": 0,
+        "engine": 0,
+        "count": 64,
+        "seconds": 0.0513330999528989
+      },
+      {
+        "round": 1,
+        "case": 7,
+        "phase": 0,
+        "engine": 1,
+        "count": 32,
+        "seconds": 0.036365499952808
+      },
+      {
+        "round": 1,
+        "case": 7,
+        "phase": 1,
+        "engine": 1,
+        "count": 2,
+        "seconds": 0.0425170999951661
+      },
+      {
+        "round": 1,
+        "case": 7,
+        "phase": 1,
+        "engine": 0,
+        "count": 2,
+        "seconds": 0.0371811999939382
+      },
+      {
+        "round": 1,
+        "case": 7,
+        "phase": 2,
+        "engine": 0,
+        "count": 2,
+        "seconds": 0.0364845999283716
+      },
+      {
+        "round": 1,
+        "case": 7,
+        "phase": 2,
+        "engine": 1,
+        "count": 2,
+        "seconds": 0.0381362000480294
+      },
+      {
+        "round": 2,
+        "case": 0,
+        "phase": 0,
+        "engine": 0,
+        "count": 128,
+        "seconds": 0.0537878000177443
+      },
+      {
+        "round": 2,
+        "case": 0,
+        "phase": 0,
+        "engine": 1,
+        "count": 64,
+        "seconds": 0.0464006999973208
+      },
+      {
+        "round": 2,
+        "case": 0,
+        "phase": 1,
+        "engine": 1,
+        "count": 32,
+        "seconds": 0.0276918000308797
+      },
+      {
+        "round": 2,
+        "case": 0,
+        "phase": 1,
+        "engine": 0,
+        "count": 64,
+        "seconds": 0.0323617999674752
+      },
+      {
+        "round": 2,
+        "case": 0,
+        "phase": 2,
+        "engine": 0,
+        "count": 512,
+        "seconds": 0.0349183999933302
+      },
+      {
+        "round": 2,
+        "case": 0,
+        "phase": 2,
+        "engine": 1,
+        "count": 512,
+        "seconds": 0.0406234000110999
+      },
+      {
+        "round": 2,
+        "case": 1,
+        "phase": 0,
+        "engine": 1,
+        "count": 64,
+        "seconds": 0.0447468999773264
+      },
+      {
+        "round": 2,
+        "case": 1,
+        "phase": 0,
+        "engine": 0,
+        "count": 128,
+        "seconds": 0.0500692999921739
+      },
+      {
+        "round": 2,
+        "case": 1,
+        "phase": 1,
+        "engine": 0,
+        "count": 64,
+        "seconds": 0.0313566999975592
+      },
+      {
+        "round": 2,
+        "case": 1,
+        "phase": 1,
+        "engine": 1,
+        "count": 32,
+        "seconds": 0.0267260000109673
+      },
+      {
+        "round": 2,
+        "case": 1,
+        "phase": 2,
+        "engine": 1,
+        "count": 512,
+        "seconds": 0.0358776999637485
+      },
+      {
+        "round": 2,
+        "case": 1,
+        "phase": 2,
+        "engine": 0,
+        "count": 512,
+        "seconds": 0.0343428000342101
+      },
+      {
+        "round": 2,
+        "case": 2,
+        "phase": 0,
+        "engine": 0,
+        "count": 128,
+        "seconds": 0.0535877000074834
+      },
+      {
+        "round": 2,
+        "case": 2,
+        "phase": 0,
+        "engine": 1,
+        "count": 64,
+        "seconds": 0.0467004999518394
+      },
+      {
+        "round": 2,
+        "case": 2,
+        "phase": 1,
+        "engine": 1,
+        "count": 32,
+        "seconds": 0.0369959999807179
+      },
+      {
+        "round": 2,
+        "case": 2,
+        "phase": 1,
+        "engine": 0,
+        "count": 64,
+        "seconds": 0.038995899958536
+      },
+      {
+        "round": 2,
+        "case": 2,
+        "phase": 2,
+        "engine": 0,
+        "count": 256,
+        "seconds": 0.0398751000175253
+      },
+      {
+        "round": 2,
+        "case": 2,
+        "phase": 2,
+        "engine": 1,
+        "count": 128,
+        "seconds": 0.0313369000796229
+      },
+      {
+        "round": 2,
+        "case": 3,
+        "phase": 0,
+        "engine": 1,
+        "count": 64,
+        "seconds": 0.0450585000216961
+      },
+      {
+        "round": 2,
+        "case": 3,
+        "phase": 0,
+        "engine": 0,
+        "count": 128,
+        "seconds": 0.0531098000938073
+      },
+      {
+        "round": 2,
+        "case": 3,
+        "phase": 1,
+        "engine": 0,
+        "count": 64,
+        "seconds": 0.0348366000689566
+      },
+      {
+        "round": 2,
+        "case": 3,
+        "phase": 1,
+        "engine": 1,
+        "count": 32,
+        "seconds": 0.0327645000070333
+      },
+      {
+        "round": 2,
+        "case": 3,
+        "phase": 2,
+        "engine": 1,
+        "count": 256,
+        "seconds": 0.0402688001049682
+      },
+      {
+        "round": 2,
+        "case": 3,
+        "phase": 2,
+        "engine": 0,
+        "count": 256,
+        "seconds": 0.0303011999931186
+      },
+      {
+        "round": 2,
+        "case": 4,
+        "phase": 0,
+        "engine": 0,
+        "count": 32,
+        "seconds": 0.0322193000465631
+      },
+      {
+        "round": 2,
+        "case": 4,
+        "phase": 0,
+        "engine": 1,
+        "count": 32,
+        "seconds": 0.0413988999789581
+      },
+      {
+        "round": 2,
+        "case": 4,
+        "phase": 1,
+        "engine": 1,
+        "count": 1,
+        "seconds": 0.0844021000666544
+      },
+      {
+        "round": 2,
+        "case": 4,
+        "phase": 1,
+        "engine": 0,
+        "count": 1,
+        "seconds": 0.0813704999163747
+      },
+      {
+        "round": 2,
+        "case": 4,
+        "phase": 2,
+        "engine": 0,
+        "count": 1,
+        "seconds": 0.078800700022839
+      },
+      {
+        "round": 2,
+        "case": 4,
+        "phase": 2,
+        "engine": 1,
+        "count": 1,
+        "seconds": 0.0744640999473631
+      },
+      {
+        "round": 2,
+        "case": 5,
+        "phase": 0,
+        "engine": 1,
+        "count": 32,
+        "seconds": 0.0558644999982789
+      },
+      {
+        "round": 2,
+        "case": 5,
+        "phase": 0,
+        "engine": 0,
+        "count": 32,
+        "seconds": 0.0449795000022277
+      },
+      {
+        "round": 2,
+        "case": 5,
+        "phase": 1,
+        "engine": 0,
+        "count": 1,
+        "seconds": 0.0482246000319719
+      },
+      {
+        "round": 2,
+        "case": 5,
+        "phase": 1,
+        "engine": 1,
+        "count": 1,
+        "seconds": 0.0351679000305012
+      },
+      {
+        "round": 2,
+        "case": 5,
+        "phase": 2,
+        "engine": 1,
+        "count": 1,
+        "seconds": 0.0325330999912694
+      },
+      {
+        "round": 2,
+        "case": 5,
+        "phase": 2,
+        "engine": 0,
+        "count": 1,
+        "seconds": 0.0480977999977767
+      },
+      {
+        "round": 2,
+        "case": 6,
+        "phase": 0,
+        "engine": 0,
+        "count": 32,
+        "seconds": 0.0312383999116719
+      },
+      {
+        "round": 2,
+        "case": 6,
+        "phase": 0,
+        "engine": 1,
+        "count": 32,
+        "seconds": 0.0427200000267476
+      },
+      {
+        "round": 2,
+        "case": 6,
+        "phase": 1,
+        "engine": 1,
+        "count": 1,
+        "seconds": 0.105713200056925
+      },
+      {
+        "round": 2,
+        "case": 6,
+        "phase": 1,
+        "engine": 0,
+        "count": 1,
+        "seconds": 0.0855822999728844
+      },
+      {
+        "round": 2,
+        "case": 6,
+        "phase": 2,
+        "engine": 0,
+        "count": 1,
+        "seconds": 0.0812511000549421
+      },
+      {
+        "round": 2,
+        "case": 6,
+        "phase": 2,
+        "engine": 1,
+        "count": 1,
+        "seconds": 0.0983709000283852
+      },
+      {
+        "round": 2,
+        "case": 7,
+        "phase": 0,
+        "engine": 1,
+        "count": 32,
+        "seconds": 0.0373988000210375
+      },
+      {
+        "round": 2,
+        "case": 7,
+        "phase": 0,
+        "engine": 0,
+        "count": 64,
+        "seconds": 0.0585431000217795
+      },
+      {
+        "round": 2,
+        "case": 7,
+        "phase": 1,
+        "engine": 0,
+        "count": 2,
+        "seconds": 0.043463799986057
+      },
+      {
+        "round": 2,
+        "case": 7,
+        "phase": 1,
+        "engine": 1,
+        "count": 2,
+        "seconds": 0.0443828999996185
+      },
+      {
+        "round": 2,
+        "case": 7,
+        "phase": 2,
+        "engine": 1,
+        "count": 2,
+        "seconds": 0.0439109000144526
+      },
+      {
+        "round": 2,
+        "case": 7,
+        "phase": 2,
+        "engine": 0,
+        "count": 2,
+        "seconds": 0.03882929997053
+      },
+      {
+        "round": 3,
+        "case": 0,
+        "phase": 0,
+        "engine": 1,
+        "count": 64,
+        "seconds": 0.0521379999117926
+      },
+      {
+        "round": 3,
+        "case": 0,
+        "phase": 0,
+        "engine": 0,
+        "count": 128,
+        "seconds": 0.0576818999834359
+      },
+      {
+        "round": 3,
+        "case": 0,
+        "phase": 1,
+        "engine": 0,
+        "count": 64,
+        "seconds": 0.0325864000478759
+      },
+      {
+        "round": 3,
+        "case": 0,
+        "phase": 1,
+        "engine": 1,
+        "count": 32,
+        "seconds": 0.0299444000702351
+      },
+      {
+        "round": 3,
+        "case": 0,
+        "phase": 2,
+        "engine": 1,
+        "count": 512,
+        "seconds": 0.0446085999719799
+      },
+      {
+        "round": 3,
+        "case": 0,
+        "phase": 2,
+        "engine": 0,
+        "count": 512,
+        "seconds": 0.0363396999891847
+      },
+      {
+        "round": 3,
+        "case": 1,
+        "phase": 0,
+        "engine": 0,
+        "count": 128,
+        "seconds": 0.0516748999943957
+      },
+      {
+        "round": 3,
+        "case": 1,
+        "phase": 0,
+        "engine": 1,
+        "count": 64,
+        "seconds": 0.0486709999386221
+      },
+      {
+        "round": 3,
+        "case": 1,
+        "phase": 1,
+        "engine": 1,
+        "count": 32,
+        "seconds": 0.0277397000463679
+      },
+      {
+        "round": 3,
+        "case": 1,
+        "phase": 1,
+        "engine": 0,
+        "count": 64,
+        "seconds": 0.0334787999745458
+      },
+      {
+        "round": 3,
+        "case": 1,
+        "phase": 2,
+        "engine": 0,
+        "count": 512,
+        "seconds": 0.0371264000423253
+      },
+      {
+        "round": 3,
+        "case": 1,
+        "phase": 2,
+        "engine": 1,
+        "count": 512,
+        "seconds": 0.0360818000044674
+      },
+      {
+        "round": 3,
+        "case": 2,
+        "phase": 0,
+        "engine": 1,
+        "count": 64,
+        "seconds": 0.0473812000127509
+      },
+      {
+        "round": 3,
+        "case": 2,
+        "phase": 0,
+        "engine": 0,
+        "count": 128,
+        "seconds": 0.057536100037396
+      },
+      {
+        "round": 3,
+        "case": 2,
+        "phase": 1,
+        "engine": 0,
+        "count": 64,
+        "seconds": 0.0384759000735357
+      },
+      {
+        "round": 3,
+        "case": 2,
+        "phase": 1,
+        "engine": 1,
+        "count": 32,
+        "seconds": 0.0358115999260917
+      },
+      {
+        "round": 3,
+        "case": 2,
+        "phase": 2,
+        "engine": 1,
+        "count": 128,
+        "seconds": 0.034053000039421
+      },
+      {
+        "round": 3,
+        "case": 2,
+        "phase": 2,
+        "engine": 0,
+        "count": 256,
+        "seconds": 0.038931299932301
+      },
+      {
+        "round": 3,
+        "case": 3,
+        "phase": 0,
+        "engine": 0,
+        "count": 128,
+        "seconds": 0.0561866000061855
+      },
+      {
+        "round": 3,
+        "case": 3,
+        "phase": 0,
+        "engine": 1,
+        "count": 64,
+        "seconds": 0.0577162000117823
+      },
+      {
+        "round": 3,
+        "case": 3,
+        "phase": 1,
+        "engine": 1,
+        "count": 32,
+        "seconds": 0.0380449000513181
+      },
+      {
+        "round": 3,
+        "case": 3,
+        "phase": 1,
+        "engine": 0,
+        "count": 64,
+        "seconds": 0.0404781999532133
+      },
+      {
+        "round": 3,
+        "case": 3,
+        "phase": 2,
+        "engine": 0,
+        "count": 256,
+        "seconds": 0.0329928999999538
+      },
+      {
+        "round": 3,
+        "case": 3,
+        "phase": 2,
+        "engine": 1,
+        "count": 256,
+        "seconds": 0.0411187999416143
+      },
+      {
+        "round": 3,
+        "case": 4,
+        "phase": 0,
+        "engine": 1,
+        "count": 32,
+        "seconds": 0.0400580000132322
+      },
+      {
+        "round": 3,
+        "case": 4,
+        "phase": 0,
+        "engine": 0,
+        "count": 32,
+        "seconds": 0.0294410000788048
+      },
+      {
+        "round": 3,
+        "case": 4,
+        "phase": 1,
+        "engine": 0,
+        "count": 1,
+        "seconds": 0.0986634000437334
+      },
+      {
+        "round": 3,
+        "case": 4,
+        "phase": 1,
+        "engine": 1,
+        "count": 1,
+        "seconds": 0.0707449000328779
+      },
+      {
+        "round": 3,
+        "case": 4,
+        "phase": 2,
+        "engine": 1,
+        "count": 1,
+        "seconds": 0.0705844999756664
+      },
+      {
+        "round": 3,
+        "case": 4,
+        "phase": 2,
+        "engine": 0,
+        "count": 1,
+        "seconds": 0.0784313000040129
+      },
+      {
+        "round": 3,
+        "case": 5,
+        "phase": 0,
+        "engine": 0,
+        "count": 32,
+        "seconds": 0.0435350999468938
+      },
+      {
+        "round": 3,
+        "case": 5,
+        "phase": 0,
+        "engine": 1,
+        "count": 32,
+        "seconds": 0.0524060000898317
+      },
+      {
+        "round": 3,
+        "case": 5,
+        "phase": 1,
+        "engine": 1,
+        "count": 1,
+        "seconds": 0.0324232999701053
+      },
+      {
+        "round": 3,
+        "case": 5,
+        "phase": 1,
+        "engine": 0,
+        "count": 1,
+        "seconds": 0.0483159000286832
+      },
+      {
+        "round": 3,
+        "case": 5,
+        "phase": 2,
+        "engine": 0,
+        "count": 1,
+        "seconds": 0.0460520000196993
+      },
+      {
+        "round": 3,
+        "case": 5,
+        "phase": 2,
+        "engine": 1,
+        "count": 1,
+        "seconds": 0.0307763000018895
+      },
+      {
+        "round": 3,
+        "case": 6,
+        "phase": 0,
+        "engine": 1,
+        "count": 32,
+        "seconds": 0.0542736999923363
+      },
+      {
+        "round": 3,
+        "case": 6,
+        "phase": 0,
+        "engine": 0,
+        "count": 32,
+        "seconds": 0.0300401999847963
+      },
+      {
+        "round": 3,
+        "case": 6,
+        "phase": 1,
+        "engine": 0,
+        "count": 1,
+        "seconds": 0.0884063000557944
+      },
+      {
+        "round": 3,
+        "case": 6,
+        "phase": 1,
+        "engine": 1,
+        "count": 1,
+        "seconds": 0.0991565999574959
+      },
+      {
+        "round": 3,
+        "case": 6,
+        "phase": 2,
+        "engine": 1,
+        "count": 1,
+        "seconds": 0.094484300003387
+      },
+      {
+        "round": 3,
+        "case": 6,
+        "phase": 2,
+        "engine": 0,
+        "count": 1,
+        "seconds": 0.0785428999224678
+      },
+      {
+        "round": 3,
+        "case": 7,
+        "phase": 0,
+        "engine": 0,
+        "count": 64,
+        "seconds": 0.0513919999357313
+      },
+      {
+        "round": 3,
+        "case": 7,
+        "phase": 0,
+        "engine": 1,
+        "count": 32,
+        "seconds": 0.0355994000565261
+      },
+      {
+        "round": 3,
+        "case": 7,
+        "phase": 1,
+        "engine": 1,
+        "count": 2,
+        "seconds": 0.0415710000088438
+      },
+      {
+        "round": 3,
+        "case": 7,
+        "phase": 1,
+        "engine": 0,
+        "count": 2,
+        "seconds": 0.0381163000129163
+      },
+      {
+        "round": 3,
+        "case": 7,
+        "phase": 2,
+        "engine": 0,
+        "count": 2,
+        "seconds": 0.0360599999548867
+      },
+      {
+        "round": 3,
+        "case": 7,
+        "phase": 2,
+        "engine": 1,
+        "count": 2,
+        "seconds": 0.03773929993622
+      },
+      {
+        "round": 4,
+        "case": 0,
+        "phase": 0,
+        "engine": 0,
+        "count": 128,
+        "seconds": 0.0533434000099078
+      },
+      {
+        "round": 4,
+        "case": 0,
+        "phase": 0,
+        "engine": 1,
+        "count": 64,
+        "seconds": 0.0464822000358254
+      },
+      {
+        "round": 4,
+        "case": 0,
+        "phase": 1,
+        "engine": 1,
+        "count": 32,
+        "seconds": 0.0286409000400454
+      },
+      {
+        "round": 4,
+        "case": 0,
+        "phase": 1,
+        "engine": 0,
+        "count": 64,
+        "seconds": 0.0320357999298722
+      },
+      {
+        "round": 4,
+        "case": 0,
+        "phase": 2,
+        "engine": 0,
+        "count": 512,
+        "seconds": 0.0354995999950916
+      },
+      {
+        "round": 4,
+        "case": 0,
+        "phase": 2,
+        "engine": 1,
+        "count": 512,
+        "seconds": 0.0391022000694647
+      },
+      {
+        "round": 4,
+        "case": 1,
+        "phase": 0,
+        "engine": 1,
+        "count": 64,
+        "seconds": 0.0450770000461489
+      },
+      {
+        "round": 4,
+        "case": 1,
+        "phase": 0,
+        "engine": 0,
+        "count": 128,
+        "seconds": 0.0502556000137702
+      },
+      {
+        "round": 4,
+        "case": 1,
+        "phase": 1,
+        "engine": 0,
+        "count": 64,
+        "seconds": 0.0297463999595493
+      },
+      {
+        "round": 4,
+        "case": 1,
+        "phase": 1,
+        "engine": 1,
+        "count": 32,
+        "seconds": 0.0269717000192031
+      },
+      {
+        "round": 4,
+        "case": 1,
+        "phase": 2,
+        "engine": 1,
+        "count": 512,
+        "seconds": 0.0390804999042302
+      },
+      {
+        "round": 4,
+        "case": 1,
+        "phase": 2,
+        "engine": 0,
+        "count": 512,
+        "seconds": 0.0344206000445411
+      },
+      {
+        "round": 4,
+        "case": 2,
+        "phase": 0,
+        "engine": 0,
+        "count": 128,
+        "seconds": 0.060496799997054
+      },
+      {
+        "round": 4,
+        "case": 2,
+        "phase": 0,
+        "engine": 1,
+        "count": 64,
+        "seconds": 0.0477824999252334
+      },
+      {
+        "round": 4,
+        "case": 2,
+        "phase": 1,
+        "engine": 1,
+        "count": 32,
+        "seconds": 0.0362272999482229
+      },
+      {
+        "round": 4,
+        "case": 2,
+        "phase": 1,
+        "engine": 0,
+        "count": 64,
+        "seconds": 0.040762500022538
+      },
+      {
+        "round": 4,
+        "case": 2,
+        "phase": 2,
+        "engine": 0,
+        "count": 256,
+        "seconds": 0.0405903999926522
+      },
+      {
+        "round": 4,
+        "case": 2,
+        "phase": 2,
+        "engine": 1,
+        "count": 128,
+        "seconds": 0.0318869999609888
+      },
+      {
+        "round": 4,
+        "case": 3,
+        "phase": 0,
+        "engine": 1,
+        "count": 64,
+        "seconds": 0.0438205000245944
+      },
+      {
+        "round": 4,
+        "case": 3,
+        "phase": 0,
+        "engine": 0,
+        "count": 128,
+        "seconds": 0.0514508000342175
+      },
+      {
+        "round": 4,
+        "case": 3,
+        "phase": 1,
+        "engine": 0,
+        "count": 64,
+        "seconds": 0.0326186999445781
+      },
+      {
+        "round": 4,
+        "case": 3,
+        "phase": 1,
+        "engine": 1,
+        "count": 32,
+        "seconds": 0.0298957000486553
+      },
+      {
+        "round": 4,
+        "case": 3,
+        "phase": 2,
+        "engine": 1,
+        "count": 256,
+        "seconds": 0.0424772000405937
+      },
+      {
+        "round": 4,
+        "case": 3,
+        "phase": 2,
+        "engine": 0,
+        "count": 256,
+        "seconds": 0.0304565000114962
+      },
+      {
+        "round": 4,
+        "case": 4,
+        "phase": 0,
+        "engine": 0,
+        "count": 32,
+        "seconds": 0.0301369000226259
+      },
+      {
+        "round": 4,
+        "case": 4,
+        "phase": 0,
+        "engine": 1,
+        "count": 32,
+        "seconds": 0.0406300000613555
+      },
+      {
+        "round": 4,
+        "case": 4,
+        "phase": 1,
+        "engine": 1,
+        "count": 1,
+        "seconds": 0.0748433999251574
+      },
+      {
+        "round": 4,
+        "case": 4,
+        "phase": 1,
+        "engine": 0,
+        "count": 1,
+        "seconds": 0.0836562999757007
+      },
+      {
+        "round": 4,
+        "case": 4,
+        "phase": 2,
+        "engine": 0,
+        "count": 1,
+        "seconds": 0.0812872999813408
+      },
+      {
+        "round": 4,
+        "case": 4,
+        "phase": 2,
+        "engine": 1,
+        "count": 1,
+        "seconds": 0.0724337999708951
+      },
+      {
+        "round": 4,
+        "case": 5,
+        "phase": 0,
+        "engine": 1,
+        "count": 32,
+        "seconds": 0.0528351999819279
+      },
+      {
+        "round": 4,
+        "case": 5,
+        "phase": 0,
+        "engine": 0,
+        "count": 32,
+        "seconds": 0.0447295000776649
+      },
+      {
+        "round": 4,
+        "case": 5,
+        "phase": 1,
+        "engine": 0,
+        "count": 1,
+        "seconds": 0.0491992000024766
+      },
+      {
+        "round": 4,
+        "case": 5,
+        "phase": 1,
+        "engine": 1,
+        "count": 1,
+        "seconds": 0.0335970000596717
+      },
+      {
+        "round": 4,
+        "case": 5,
+        "phase": 2,
+        "engine": 1,
+        "count": 1,
+        "seconds": 0.0323288000654429
+      },
+      {
+        "round": 4,
+        "case": 5,
+        "phase": 2,
+        "engine": 0,
+        "count": 1,
+        "seconds": 0.0465039999689907
+      },
+      {
+        "round": 4,
+        "case": 6,
+        "phase": 0,
+        "engine": 0,
+        "count": 32,
+        "seconds": 0.0341437999159098
+      },
+      {
+        "round": 4,
+        "case": 6,
+        "phase": 0,
+        "engine": 1,
+        "count": 32,
+        "seconds": 0.040804099990055
+      },
+      {
+        "round": 4,
+        "case": 6,
+        "phase": 1,
+        "engine": 1,
+        "count": 1,
+        "seconds": 0.0981630999594927
+      },
+      {
+        "round": 4,
+        "case": 6,
+        "phase": 1,
+        "engine": 0,
+        "count": 1,
+        "seconds": 0.0895888999802992
+      },
+      {
+        "round": 4,
+        "case": 6,
+        "phase": 2,
+        "engine": 0,
+        "count": 1,
+        "seconds": 0.0798662999877706
+      },
+      {
+        "round": 4,
+        "case": 6,
+        "phase": 2,
+        "engine": 1,
+        "count": 1,
+        "seconds": 0.100016299984418
+      },
+      {
+        "round": 4,
+        "case": 7,
+        "phase": 0,
+        "engine": 1,
+        "count": 32,
+        "seconds": 0.0354953000787646
+      },
+      {
+        "round": 4,
+        "case": 7,
+        "phase": 0,
+        "engine": 0,
+        "count": 64,
+        "seconds": 0.0563781999517232
+      },
+      {
+        "round": 4,
+        "case": 7,
+        "phase": 1,
+        "engine": 0,
+        "count": 2,
+        "seconds": 0.037914700107649
+      },
+      {
+        "round": 4,
+        "case": 7,
+        "phase": 1,
+        "engine": 1,
+        "count": 2,
+        "seconds": 0.041539300000295
+      },
+      {
+        "round": 4,
+        "case": 7,
+        "phase": 2,
+        "engine": 1,
+        "count": 2,
+        "seconds": 0.0380498999729753
+      },
+      {
+        "round": 4,
+        "case": 7,
+        "phase": 2,
+        "engine": 0,
+        "count": 2,
+        "seconds": 0.0361166000366211
+      },
+      {
+        "round": 5,
+        "case": 0,
+        "phase": 0,
+        "engine": 1,
+        "count": 64,
+        "seconds": 0.0460027999943122
+      },
+      {
+        "round": 5,
+        "case": 0,
+        "phase": 0,
+        "engine": 0,
+        "count": 128,
+        "seconds": 0.0555086000822484
+      },
+      {
+        "round": 5,
+        "case": 0,
+        "phase": 1,
+        "engine": 0,
+        "count": 64,
+        "seconds": 0.0326623999280855
+      },
+      {
+        "round": 5,
+        "case": 0,
+        "phase": 1,
+        "engine": 1,
+        "count": 32,
+        "seconds": 0.0277856999309734
+      },
+      {
+        "round": 5,
+        "case": 0,
+        "phase": 2,
+        "engine": 1,
+        "count": 512,
+        "seconds": 0.0396510000573471
+      },
+      {
+        "round": 5,
+        "case": 0,
+        "phase": 2,
+        "engine": 0,
+        "count": 512,
+        "seconds": 0.0366263999603689
+      },
+      {
+        "round": 5,
+        "case": 1,
+        "phase": 0,
+        "engine": 0,
+        "count": 128,
+        "seconds": 0.0492789000272751
+      },
+      {
+        "round": 5,
+        "case": 1,
+        "phase": 0,
+        "engine": 1,
+        "count": 64,
+        "seconds": 0.0444811000488698
+      },
+      {
+        "round": 5,
+        "case": 1,
+        "phase": 1,
+        "engine": 1,
+        "count": 32,
+        "seconds": 0.0266964000184089
+      },
+      {
+        "round": 5,
+        "case": 1,
+        "phase": 1,
+        "engine": 0,
+        "count": 64,
+        "seconds": 0.0310565999243408
+      },
+      {
+        "round": 5,
+        "case": 1,
+        "phase": 2,
+        "engine": 0,
+        "count": 512,
+        "seconds": 0.0340052999090403
+      },
+      {
+        "round": 5,
+        "case": 1,
+        "phase": 2,
+        "engine": 1,
+        "count": 512,
+        "seconds": 0.0377275999635458
+      },
+      {
+        "round": 5,
+        "case": 2,
+        "phase": 0,
+        "engine": 1,
+        "count": 64,
+        "seconds": 0.0481360000558197
+      },
+      {
+        "round": 5,
+        "case": 2,
+        "phase": 0,
+        "engine": 0,
+        "count": 128,
+        "seconds": 0.0545708000427112
+      },
+      {
+        "round": 5,
+        "case": 2,
+        "phase": 1,
+        "engine": 0,
+        "count": 64,
+        "seconds": 0.0386526000220329
+      },
+      {
+        "round": 5,
+        "case": 2,
+        "phase": 1,
+        "engine": 1,
+        "count": 32,
+        "seconds": 0.0347585999406874
+      },
+      {
+        "round": 5,
+        "case": 2,
+        "phase": 2,
+        "engine": 1,
+        "count": 128,
+        "seconds": 0.0313467000378296
+      },
+      {
+        "round": 5,
+        "case": 2,
+        "phase": 2,
+        "engine": 0,
+        "count": 256,
+        "seconds": 0.0380170000717044
+      },
+      {
+        "round": 5,
+        "case": 3,
+        "phase": 0,
+        "engine": 0,
+        "count": 128,
+        "seconds": 0.050325799966231
+      },
+      {
+        "round": 5,
+        "case": 3,
+        "phase": 0,
+        "engine": 1,
+        "count": 64,
+        "seconds": 0.0445268999319524
+      },
+      {
+        "round": 5,
+        "case": 3,
+        "phase": 1,
+        "engine": 1,
+        "count": 32,
+        "seconds": 0.0303578999591991
+      },
+      {
+        "round": 5,
+        "case": 3,
+        "phase": 1,
+        "engine": 0,
+        "count": 64,
+        "seconds": 0.0337521999608725
+      },
+      {
+        "round": 5,
+        "case": 3,
+        "phase": 2,
+        "engine": 0,
+        "count": 256,
+        "seconds": 0.0308474999619648
+      },
+      {
+        "round": 5,
+        "case": 3,
+        "phase": 2,
+        "engine": 1,
+        "count": 256,
+        "seconds": 0.0417440000455827
+      },
+      {
+        "round": 5,
+        "case": 4,
+        "phase": 0,
+        "engine": 1,
+        "count": 32,
+        "seconds": 0.0422871999908239
+      },
+      {
+        "round": 5,
+        "case": 4,
+        "phase": 0,
+        "engine": 0,
+        "count": 32,
+        "seconds": 0.0308912999462336
+      },
+      {
+        "round": 5,
+        "case": 4,
+        "phase": 1,
+        "engine": 0,
+        "count": 1,
+        "seconds": 0.0869462999980897
+      },
+      {
+        "round": 5,
+        "case": 4,
+        "phase": 1,
+        "engine": 1,
+        "count": 1,
+        "seconds": 0.0822465000674129
+      },
+      {
+        "round": 5,
+        "case": 4,
+        "phase": 2,
+        "engine": 1,
+        "count": 1,
+        "seconds": 0.0745000999886543
+      },
+      {
+        "round": 5,
+        "case": 4,
+        "phase": 2,
+        "engine": 0,
+        "count": 1,
+        "seconds": 0.0849124999949709
+      },
+      {
+        "round": 5,
+        "case": 5,
+        "phase": 0,
+        "engine": 0,
+        "count": 32,
+        "seconds": 0.0444483000319451
+      },
+      {
+        "round": 5,
+        "case": 5,
+        "phase": 0,
+        "engine": 1,
+        "count": 32,
+        "seconds": 0.0596617000410333
+      },
+      {
+        "round": 5,
+        "case": 5,
+        "phase": 1,
+        "engine": 1,
+        "count": 1,
+        "seconds": 0.0340298999799415
+      },
+      {
+        "round": 5,
+        "case": 5,
+        "phase": 1,
+        "engine": 0,
+        "count": 1,
+        "seconds": 0.0462531999219209
+      },
+      {
+        "round": 5,
+        "case": 5,
+        "phase": 2,
+        "engine": 0,
+        "count": 1,
+        "seconds": 0.0452456000493839
+      },
+      {
+        "round": 5,
+        "case": 5,
+        "phase": 2,
+        "engine": 1,
+        "count": 1,
+        "seconds": 0.0312391000334173
+      },
+      {
+        "round": 5,
+        "case": 6,
+        "phase": 0,
+        "engine": 1,
+        "count": 32,
+        "seconds": 0.0425351000158116
+      },
+      {
+        "round": 5,
+        "case": 6,
+        "phase": 0,
+        "engine": 0,
+        "count": 32,
+        "seconds": 0.030758099979721
+      },
+      {
+        "round": 5,
+        "case": 6,
+        "phase": 1,
+        "engine": 0,
+        "count": 1,
+        "seconds": 0.0805292000295594
+      },
+      {
+        "round": 5,
+        "case": 6,
+        "phase": 1,
+        "engine": 1,
+        "count": 1,
+        "seconds": 0.0976711000548676
+      },
+      {
+        "round": 5,
+        "case": 6,
+        "phase": 2,
+        "engine": 1,
+        "count": 1,
+        "seconds": 0.096959299989976
+      },
+      {
+        "round": 5,
+        "case": 6,
+        "phase": 2,
+        "engine": 0,
+        "count": 1,
+        "seconds": 0.0890556999947876
+      },
+      {
+        "round": 5,
+        "case": 7,
+        "phase": 0,
+        "engine": 0,
+        "count": 64,
+        "seconds": 0.0638579999795184
+      },
+      {
+        "round": 5,
+        "case": 7,
+        "phase": 0,
+        "engine": 1,
+        "count": 32,
+        "seconds": 0.0371499999891967
+      },
+      {
+        "round": 5,
+        "case": 7,
+        "phase": 1,
+        "engine": 1,
+        "count": 2,
+        "seconds": 0.0429213000461459
+      },
+      {
+        "round": 5,
+        "case": 7,
+        "phase": 1,
+        "engine": 0,
+        "count": 2,
+        "seconds": 0.0398617000319064
+      },
+      {
+        "round": 5,
+        "case": 7,
+        "phase": 2,
+        "engine": 0,
+        "count": 2,
+        "seconds": 0.0378334999550134
+      },
+      {
+        "round": 5,
+        "case": 7,
+        "phase": 2,
+        "engine": 1,
+        "count": 2,
+        "seconds": 0.0402301999274641
+      },
+      {
+        "round": 6,
+        "case": 0,
+        "phase": 0,
+        "engine": 0,
+        "count": 128,
+        "seconds": 0.0571095999330282
+      },
+      {
+        "round": 6,
+        "case": 0,
+        "phase": 0,
+        "engine": 1,
+        "count": 64,
+        "seconds": 0.0492570999776945
+      },
+      {
+        "round": 6,
+        "case": 0,
+        "phase": 1,
+        "engine": 1,
+        "count": 32,
+        "seconds": 0.0292333998950198
+      },
+      {
+        "round": 6,
+        "case": 0,
+        "phase": 1,
+        "engine": 0,
+        "count": 64,
+        "seconds": 0.0326423000078648
+      },
+      {
+        "round": 6,
+        "case": 0,
+        "phase": 2,
+        "engine": 0,
+        "count": 512,
+        "seconds": 0.0356515001039952
+      },
+      {
+        "round": 6,
+        "case": 0,
+        "phase": 2,
+        "engine": 1,
+        "count": 512,
+        "seconds": 0.0395647999830544
+      },
+      {
+        "round": 6,
+        "case": 1,
+        "phase": 0,
+        "engine": 1,
+        "count": 64,
+        "seconds": 0.0450396999949589
+      },
+      {
+        "round": 6,
+        "case": 1,
+        "phase": 0,
+        "engine": 0,
+        "count": 128,
+        "seconds": 0.0494302000151947
+      },
+      {
+        "round": 6,
+        "case": 1,
+        "phase": 1,
+        "engine": 0,
+        "count": 64,
+        "seconds": 0.0311870999867097
+      },
+      {
+        "round": 6,
+        "case": 1,
+        "phase": 1,
+        "engine": 1,
+        "count": 32,
+        "seconds": 0.0263110999949276
+      },
+      {
+        "round": 6,
+        "case": 1,
+        "phase": 2,
+        "engine": 1,
+        "count": 512,
+        "seconds": 0.0358703000238165
+      },
+      {
+        "round": 6,
+        "case": 1,
+        "phase": 2,
+        "engine": 0,
+        "count": 512,
+        "seconds": 0.0338085999246687
+      },
+      {
+        "round": 6,
+        "case": 2,
+        "phase": 0,
+        "engine": 0,
+        "count": 128,
+        "seconds": 0.0571419999469072
+      },
+      {
+        "round": 6,
+        "case": 2,
+        "phase": 0,
+        "engine": 1,
+        "count": 64,
+        "seconds": 0.0480894000502303
+      },
+      {
+        "round": 6,
+        "case": 2,
+        "phase": 1,
+        "engine": 1,
+        "count": 32,
+        "seconds": 0.0350551001029089
+      },
+      {
+        "round": 6,
+        "case": 2,
+        "phase": 1,
+        "engine": 0,
+        "count": 64,
+        "seconds": 0.0380397998960689
+      },
+      {
+        "round": 6,
+        "case": 2,
+        "phase": 2,
+        "engine": 0,
+        "count": 256,
+        "seconds": 0.038646399974823
+      },
+      {
+        "round": 6,
+        "case": 2,
+        "phase": 2,
+        "engine": 1,
+        "count": 128,
+        "seconds": 0.0333306998945773
+      },
+      {
+        "round": 6,
+        "case": 3,
+        "phase": 0,
+        "engine": 1,
+        "count": 64,
+        "seconds": 0.04513479990419
+      },
+      {
+        "round": 6,
+        "case": 3,
+        "phase": 0,
+        "engine": 0,
+        "count": 128,
+        "seconds": 0.0483908000169322
+      },
+      {
+        "round": 6,
+        "case": 3,
+        "phase": 1,
+        "engine": 0,
+        "count": 64,
+        "seconds": 0.0334519000025466
+      },
+      {
+        "round": 6,
+        "case": 3,
+        "phase": 1,
+        "engine": 1,
+        "count": 32,
+        "seconds": 0.0296910000033677
+      },
+      {
+        "round": 6,
+        "case": 3,
+        "phase": 2,
+        "engine": 1,
+        "count": 256,
+        "seconds": 0.0405288999900222
+      },
+      {
+        "round": 6,
+        "case": 3,
+        "phase": 2,
+        "engine": 0,
+        "count": 256,
+        "seconds": 0.0302175000542775
+      },
+      {
+        "round": 6,
+        "case": 4,
+        "phase": 0,
+        "engine": 0,
+        "count": 32,
+        "seconds": 0.0317181999562308
+      },
+      {
+        "round": 6,
+        "case": 4,
+        "phase": 0,
+        "engine": 1,
+        "count": 32,
+        "seconds": 0.0420457000145689
+      },
+      {
+        "round": 6,
+        "case": 4,
+        "phase": 1,
+        "engine": 1,
+        "count": 1,
+        "seconds": 0.0769870000658557
+      },
+      {
+        "round": 6,
+        "case": 4,
+        "phase": 1,
+        "engine": 0,
+        "count": 1,
+        "seconds": 0.0846731000347063
+      },
+      {
+        "round": 6,
+        "case": 4,
+        "phase": 2,
+        "engine": 0,
+        "count": 1,
+        "seconds": 0.0876768999733031
+      },
+      {
+        "round": 6,
+        "case": 4,
+        "phase": 2,
+        "engine": 1,
+        "count": 1,
+        "seconds": 0.0784808000316843
+      },
+      {
+        "round": 6,
+        "case": 5,
+        "phase": 0,
+        "engine": 1,
+        "count": 32,
+        "seconds": 0.0579733999911696
+      },
+      {
+        "round": 6,
+        "case": 5,
+        "phase": 0,
+        "engine": 0,
+        "count": 32,
+        "seconds": 0.0434648999944329
+      },
+      {
+        "round": 6,
+        "case": 5,
+        "phase": 1,
+        "engine": 0,
+        "count": 1,
+        "seconds": 0.0444568999810144
+      },
+      {
+        "round": 6,
+        "case": 5,
+        "phase": 1,
+        "engine": 1,
+        "count": 1,
+        "seconds": 0.0329391000559554
+      },
+      {
+        "round": 6,
+        "case": 5,
+        "phase": 2,
+        "engine": 1,
+        "count": 1,
+        "seconds": 0.0315657999599352
+      },
+      {
+        "round": 6,
+        "case": 5,
+        "phase": 2,
+        "engine": 0,
+        "count": 1,
+        "seconds": 0.0463534001028165
+      },
+      {
+        "round": 6,
+        "case": 6,
+        "phase": 0,
+        "engine": 0,
+        "count": 32,
+        "seconds": 0.0307542999507859
+      },
+      {
+        "round": 6,
+        "case": 6,
+        "phase": 0,
+        "engine": 1,
+        "count": 32,
+        "seconds": 0.0413914000382647
+      },
+      {
+        "round": 6,
+        "case": 6,
+        "phase": 1,
+        "engine": 1,
+        "count": 1,
+        "seconds": 0.096564200008288
+      },
+      {
+        "round": 6,
+        "case": 6,
+        "phase": 1,
+        "engine": 0,
+        "count": 1,
+        "seconds": 0.0801537999650463
+      },
+      {
+        "round": 6,
+        "case": 6,
+        "phase": 2,
+        "engine": 0,
+        "count": 1,
+        "seconds": 0.0798657000996172
+      },
+      {
+        "round": 6,
+        "case": 6,
+        "phase": 2,
+        "engine": 1,
+        "count": 1,
+        "seconds": 0.0963477999903262
+      },
+      {
+        "round": 6,
+        "case": 7,
+        "phase": 0,
+        "engine": 1,
+        "count": 32,
+        "seconds": 0.0364939999999478
+      },
+      {
+        "round": 6,
+        "case": 7,
+        "phase": 0,
+        "engine": 0,
+        "count": 64,
+        "seconds": 0.0525714999530464
+      },
+      {
+        "round": 6,
+        "case": 7,
+        "phase": 1,
+        "engine": 0,
+        "count": 2,
+        "seconds": 0.0384059000061825
+      },
+      {
+        "round": 6,
+        "case": 7,
+        "phase": 1,
+        "engine": 1,
+        "count": 2,
+        "seconds": 0.0459476000396535
+      },
+      {
+        "round": 6,
+        "case": 7,
+        "phase": 2,
+        "engine": 1,
+        "count": 2,
+        "seconds": 0.0381756999995559
+      },
+      {
+        "round": 6,
+        "case": 7,
+        "phase": 2,
+        "engine": 0,
+        "count": 2,
+        "seconds": 0.0366475000046194
+      }
+    ],
+    "timer": "QueryPerformanceCounter",
+    "rounds": 7,
+    "target_batch_seconds": 0.03,
+    "engines": [
+      "VBA",
+      "Thunk"
+    ],
+    "cpu": "Intel64 Family 6 Model 158 Stepping 13, GenuineIntel"
+  },
+  "status": "passed",
+  "dialogs": [],
+  "elapsed_seconds": 47.70608854293823,
+  "measured_at_utc": "2026-11-03T01:14:49.877770+00:00",
+  "baseline_source": null,
+  "imported_sources": {
+    "ASF.cls": "11aacba913980e19af3906bdfd7f4bbf407f0af7cf36569bf98a7952b543dedd",
+    "ASF_Compiler.cls": "cb49be9e15cb0ff16c8b70f283cb07806cfab8cd776e4b7f85b8fc429b1805ca",
+    "ASF_Globals.cls": "5958715785319685273e3aced0aaf6c9329587d6c4695c15104b71a32d349a2a",
+    "ASF_Map.cls": "cb767e50ab33d884596f3cd8b4fc72d72ffdb6206c3fad25ba9828eccf863f5f",
+    "ASF_Parser.cls": "7fa3bff9d345c063a731f257393774ebc5e202cc7115055200913b92020f5c1b",
+    "ASF_RegexEngine.cls": "0abfe7d3b69f3c3b7dd31c6f581e9f265d9e538f6c0676cebb6840e1f686911d",
+    "ASF_ScopeStack.cls": "3af8c89ec301f807e6b1806c916441c2cb94b7cdbbfc2d38f7e975e16cc92db6",
+    "ASF_Thunk.cls": "c19ff0d7cbf7fea6bf6ff6144278afea91c80058755437afdc6be6054eea46c1",
+    "ASF_ThunkProgram.cls": "413fae630a8d8825cbfd0d04c79403701178853c10e74034b81fe06f63cb33ed",
+    "ASF_VM.cls": "423549da8bcb3ac81085b3149f095a61af02b8c064bb4cf33dd5228da853168d",
+    "Lifetime.cls": "4f9060093233735df44b58d200699a8b31270359a78ac84fd11e0df0f997cdaf",
+    "ReentryProbe.cls": "c446ca196a81f6eb497b8c3ef357b19cd181fabb2a1caaa4c473683dd389d3a4",
+    "UDFunctions.cls": "bed0e4cd7c1759ed4d77897eb32c633555415cf24ff7c2c783e9cb07788b21bb",
+    "VBAcallBack.cls": "156a0837b0381c0d1ed917d15a8cdd6bde66393fe6e4dd5d47112479817426c0",
+    "VBAexpressions.cls": "e760e50f9c44adab985b2d1f59b15867aec48d9f9415148ca7f5ec636d9b330c",
+    "VBAexpressionsScope.cls": "f94f510fac2502668f04ee6f0c25fe1436b63412f83de9f223b0eabadb7f618a"
+  },
+  "commit": "13fa40495e27a336d5646583150299c54a5ce32d",
+  "sources": {
+    "ASF.cls": "9031a42067992686125fb3e65a47b0a75929ad01e0390d07b67a4e658b8dabc3",
+    "ASF_Compiler.cls": "cb49be9e15cb0ff16c8b70f283cb07806cfab8cd776e4b7f85b8fc429b1805ca",
+    "ASF_Globals.cls": "5958715785319685273e3aced0aaf6c9329587d6c4695c15104b71a32d349a2a",
+    "ASF_Map.cls": "cb767e50ab33d884596f3cd8b4fc72d72ffdb6206c3fad25ba9828eccf863f5f",
+    "ASF_Parser.cls": "7fa3bff9d345c063a731f257393774ebc5e202cc7115055200913b92020f5c1b",
+    "ASF_RegexEngine.cls": "0abfe7d3b69f3c3b7dd31c6f581e9f265d9e538f6c0676cebb6840e1f686911d",
+    "ASF_ScopeStack.cls": "3af8c89ec301f807e6b1806c916441c2cb94b7cdbbfc2d38f7e975e16cc92db6",
+    "ASF_Thunk.cls": "c19ff0d7cbf7fea6bf6ff6144278afea91c80058755437afdc6be6054eea46c1",
+    "ASF_ThunkProgram.cls": "413fae630a8d8825cbfd0d04c79403701178853c10e74034b81fe06f63cb33ed",
+    "ASF_VM.cls": "423549da8bcb3ac81085b3149f095a61af02b8c064bb4cf33dd5228da853168d",
+    "UDFunctions.cls": "bed0e4cd7c1759ed4d77897eb32c633555415cf24ff7c2c783e9cb07788b21bb",
+    "VBAcallBack.cls": "156a0837b0381c0d1ed917d15a8cdd6bde66393fe6e4dd5d47112479817426c0",
+    "VBAexpressions.cls": "e760e50f9c44adab985b2d1f59b15867aec48d9f9415148ca7f5ec636d9b330c",
+    "VBAexpressionsScope.cls": "f94f510fac2502668f04ee6f0c25fe1436b63412f83de9f223b0eabadb7f618a"
+  }
+}

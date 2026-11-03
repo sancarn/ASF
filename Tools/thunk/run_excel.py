@@ -24,7 +24,7 @@ ROOT = HERE.parents[1]
 def write(path, text):
     path.write_bytes(text.replace('\r\n', '\n').replace('\n', '\r\n').encode('utf-8'))
 
-def worker(folder, smoke, baseline=False):
+def worker(folder, smoke, baseline=False, benchmark=False):
     import win32com.client
     import win32process
     app = book = None
@@ -73,6 +73,32 @@ def worker(folder, smoke, baseline=False):
             if result['vba'] != result['native'] or failures['vba'] != failures['native'] or failures['vba'] not in ([], known):
                 raise RuntimeError('Existing suite parity/regression failed: '+str(failures))
             result['known_baseline_failures'] = failures['vba']
+        if benchmark:
+            cases = ['Arithmetic', 'Predicate', 'Strings', 'COM collection', 'For loop', 'While + branches', 'Fibonacci', 'Array callback']
+            phases = ['Create + compile', 'Create + compile + first run', 'Warm run']
+            result['benchmark'] = dict(cases=cases, phases=phases, samples=[], timer='QueryPerformanceCounter', rounds=7, target_batch_seconds=.03,
+                                       engines=['VBA', 'Thunk'], cpu=__import__('platform').processor(), benchmark_source_sha256=hashlib.sha256((folder/'Benchmark.bas').read_bytes()).hexdigest())
+            counts = {}
+            def measure(engine, case, phase, count):
+                value = str(app.Run('ThunkBenchmark.Measure', bool(engine), case, phase, count))
+                if value.startswith('ERROR'): raise RuntimeError(f'engine={engine} case={case} phase={phase} count={count}: {value}')
+                return float(value)
+            for case in range(len(cases)):
+                for phase in range(3):
+                    for engine in range(2):
+                        count = 1
+                        while measure(engine,case,phase,count) < .03 and count < 16384:
+                            count *= 2
+                        counts[engine,case,phase] = count
+            for round_ in range(7):
+                for case in range(len(cases)):
+                    for phase in range(3):
+                        for offset in range(2):
+                            engine = (round_ + case + phase + offset) % 2
+                            count = counts[engine,case,phase]
+                            seconds = measure(engine,case,phase,count)
+                            result['benchmark']['samples'].append(dict(round=round_,case=case,phase=phase,engine=engine,count=count,seconds=seconds))
+                print('Benchmark round '+str(round_+1)+'/7 complete',flush=True)
         result['status'] = 'passed'
     except Exception as exc:
         result.update(status='failed', error=repr(exc))
@@ -84,7 +110,7 @@ def worker(folder, smoke, baseline=False):
         finally:
             if app is not None: app.Quit()
 
-def prepare(folder, baseline=False):
+def prepare(folder, baseline=False, benchmark=False):
     for path in (ROOT/'src').glob('*.cls'):
         if baseline:
             if path.stem in ('ASF_Thunk', 'ASF_ThunkProgram'): continue
@@ -99,6 +125,7 @@ def prepare(folder, baseline=False):
                                     '    Set VM_.Globals = GLOBALS_\n    VM_.NativeExecution = ThunkProbe.NativeDefault\nEnd Sub', 1)
         # Preserve source encoding; the VBE imports ANSI modules.
         (folder/path.name).write_bytes(source.replace('\n','\r\n').encode('cp1252'))
+    if benchmark: write(folder/'Benchmark.bas',(HERE/'benchmark/Benchmark.bas').read_text())
     runner = (ROOT/'test/TestRunner.bas').read_text(encoding='cp1252')
     runner += '\nPublic Function ThunkSuiteResult() As String\n ThunkSuiteResult = pPassed & "/" & pRun & "/" & pFailures.Count\nEnd Function\n'
     (folder/'TestRunner.bas').write_bytes(runner.replace('\n','\r\n').encode('cp1252'))
@@ -122,7 +149,7 @@ Public Function HostCheckSecondNestedElement(arr As Variant) As String
 End Function
 ''')
 
-def supervise(output, smoke=False, baseline=False):
+def supervise(output, smoke=False, baseline=False, benchmark=False):
     import psutil
     import win32con
     import win32gui
@@ -148,7 +175,7 @@ def supervise(output, smoke=False, baseline=False):
     started = time.time()
     with tempfile.TemporaryDirectory(prefix='asf-thunk-test-') as temp:
         folder = Path(temp)
-        prepare(folder, baseline)
+        prepare(folder, baseline, benchmark)
         write(folder/'original-pids.json',json.dumps(sorted(original_pids)))
         try:
             for path, name, value in settings:
@@ -163,7 +190,7 @@ def supervise(output, smoke=False, baseline=False):
                     saved.append(dict(path=path,name=name,key_existed=existed,present=present,value=old,kind=kind))
                     winreg.SetValueEx(key,name,0,winreg.REG_DWORD,value)
             write(output/'settings-before.json',json.dumps(saved,indent=2))
-            process = subprocess.Popen([sys.executable,str(Path(__file__)),'--worker',str(folder)]+(['--smoke'] if smoke else [])+(['--baseline'] if baseline else []))
+            process = subprocess.Popen([sys.executable,str(Path(__file__)),'--worker',str(folder)]+(['--smoke'] if smoke else [])+(['--baseline'] if baseline else [])+(['--benchmark'] if benchmark else []))
             deadline = time.monotonic() + 240
             while process.poll() is None:
                 if (folder/'pid').exists(): office_pid = int((folder/'pid').read_text())
@@ -238,7 +265,8 @@ if __name__ == '__main__':
     parser.add_argument('--worker',type=Path)
     parser.add_argument('--smoke',action='store_true')
     parser.add_argument('--baseline',action='store_true')
+    parser.add_argument('--benchmark',action='store_true')
     parser.add_argument('--output',type=Path,default=HERE/'results/latest')
     args = parser.parse_args()
-    if args.worker: worker(args.worker,args.smoke,args.baseline)
-    else: supervise(args.output,args.smoke,args.baseline)
+    if args.worker: worker(args.worker,args.smoke,args.baseline,args.benchmark)
+    else: supervise(args.output,args.smoke,args.baseline,args.benchmark)
