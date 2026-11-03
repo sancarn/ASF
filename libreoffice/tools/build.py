@@ -605,7 +605,7 @@ def library_modules(repo=ROOT):
     mods = []
     for path in sorted(glob.glob(os.path.join(repo, "src", "*.cls"))):
         name = os.path.splitext(os.path.basename(path))[0]
-        if name in VBA_EXPRESSIONS or name in ("ASF_Thunk", "ASF_ThunkProgram"):
+        if name in VBA_EXPRESSIONS or name in ("ASF_Thunk", "ASF_ThunkProgram", "ASF_Bytecode", "ASF_FastVM", "ASF_ScopeVM"):
             continue
         if name in OVERRIDES:
             body = load(os.path.join(LO_DIR, "overrides", name + ".bas"))
@@ -614,6 +614,8 @@ def library_modules(repo=ROOT):
             # The native backend is Windows VBA7 x64 only. Keep the portable
             # AST engine independent of executable memory and thunk classes.
             source = re.sub(r"(?ms)^' BEGIN WINDOWS NATIVE BACKEND\n.*?^' END WINDOWS NATIVE BACKEND\n", "", source)
+            # The experimental bytecode backend is not yet ported/validated.
+            source = re.sub(r"(?ms)^' BEGIN FAST BYTECODE BACKEND\n.*?^' END FAST BYTECODE BACKEND\n", "", source)
             body = asf_passes(name, generic(source))
             body = member_collections(body, pub)
         mods.append((name, class_module(name, body), "class"))

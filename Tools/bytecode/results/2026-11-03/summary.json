@@ -1,0 +1,2352 @@
+{
+  "rows": [
+    {
+      "case": 0,
+      "name": "Arithmetic",
+      "phase": 0,
+      "phase_name": "Create + compile",
+      "engines": [
+        {
+          "name": "VBA",
+          "median_us": 441.6898436829797,
+          "min_us": 435.50546797632734,
+          "max_us": 464.49531237158203,
+          "route": "VBA AST",
+          "reason": "",
+          "speedup": 1.0
+        },
+        {
+          "name": "Thunk",
+          "median_us": 760.6609378854047,
+          "min_us": 751.3812488468828,
+          "max_us": 828.8812496175532,
+          "route": "C thunk",
+          "reason": "",
+          "speedup": 0.5806658679106791
+        },
+        {
+          "name": "Bytecode",
+          "median_us": 443.7984371179484,
+          "min_us": 425.9265624568797,
+          "max_us": 464.79843877023126,
+          "route": "Array bytecode",
+          "reason": "",
+          "speedup": 0.9952487587638612
+        }
+      ]
+    },
+    {
+      "case": 0,
+      "name": "Arithmetic",
+      "phase": 1,
+      "phase_name": "Create + compile + first run",
+      "engines": [
+        {
+          "name": "VBA",
+          "median_us": 528.3687496557828,
+          "min_us": 516.3124988030172,
+          "max_us": 553.5359377972782,
+          "route": "VBA AST",
+          "reason": "",
+          "speedup": 1.0
+        },
+        {
+          "name": "Thunk",
+          "median_us": 925.2156269212719,
+          "min_us": 906.6093771252781,
+          "max_us": 928.1343773182031,
+          "route": "C thunk",
+          "reason": "",
+          "speedup": 0.5710763353770533
+        },
+        {
+          "name": "Bytecode",
+          "median_us": 560.6156264548188,
+          "min_us": 552.1859366126594,
+          "max_us": 575.5953134212172,
+          "route": "Array bytecode",
+          "reason": "",
+          "speedup": 0.9424795255834083
+        }
+      ]
+    },
+    {
+      "case": 0,
+      "name": "Arithmetic",
+      "phase": 2,
+      "phase_name": "Warm run",
+      "engines": [
+        {
+          "name": "VBA",
+          "median_us": 75.4671875711211,
+          "min_us": 74.08164060507266,
+          "max_us": 89.1134766334289,
+          "route": "VBA AST",
+          "reason": "",
+          "speedup": 1.0
+        },
+        {
+          "name": "Thunk",
+          "median_us": 80.78554697021895,
+          "min_us": 79.63515622577695,
+          "max_us": 82.92988286484609,
+          "route": "C thunk",
+          "reason": "",
+          "speedup": 0.9341669444776004
+        },
+        {
+          "name": "Bytecode",
+          "median_us": 11.259716814038256,
+          "min_us": 11.181884786992676,
+          "max_us": 11.390869161687085,
+          "route": "Array bytecode",
+          "reason": "",
+          "speedup": 6.702405470538213
+        }
+      ]
+    },
+    {
+      "case": 1,
+      "name": "Predicate",
+      "phase": 0,
+      "phase_name": "Create + compile",
+      "engines": [
+        {
+          "name": "VBA",
+          "median_us": 401.26171916199377,
+          "min_us": 397.7234373451211,
+          "max_us": 418.4929684925008,
+          "route": "VBA AST",
+          "reason": "",
+          "speedup": 1.0
+        },
+        {
+          "name": "Thunk",
+          "median_us": 727.6234373421172,
+          "min_us": 717.2734385676454,
+          "max_us": 747.9578125639812,
+          "route": "C thunk",
+          "reason": "",
+          "speedup": 0.5514689310005373
+        },
+        {
+          "name": "Bytecode",
+          "median_us": 402.577343265875,
+          "min_us": 395.6859372920008,
+          "max_us": 420.1578121865172,
+          "route": "Array bytecode",
+          "reason": "",
+          "speedup": 0.9967319966563236
+        }
+      ]
+    },
+    {
+      "case": 1,
+      "name": "Predicate",
+      "phase": 1,
+      "phase_name": "Create + compile + first run",
+      "engines": [
+        {
+          "name": "VBA",
+          "median_us": 491.04374920716566,
+          "min_us": 483.68125135311874,
+          "max_us": 505.5218753113875,
+          "route": "VBA AST",
+          "reason": "",
+          "speedup": 1.0
+        },
+        {
+          "name": "Thunk",
+          "median_us": 875.1546884013812,
+          "min_us": 853.1031253369297,
+          "max_us": 905.3500016307219,
+          "route": "C thunk",
+          "reason": "",
+          "speedup": 0.5610936623148766
+        },
+        {
+          "name": "Bytecode",
+          "median_us": 516.8874995433719,
+          "min_us": 510.92499961669057,
+          "max_us": 544.4093749247266,
+          "route": "Array bytecode",
+          "reason": "",
+          "speedup": 0.9500012084659871
+        }
+      ]
+    },
+    {
+      "case": 1,
+      "name": "Predicate",
+      "phase": 2,
+      "phase_name": "Warm run",
+      "engines": [
+        {
+          "name": "VBA",
+          "median_us": 71.72480468398125,
+          "min_us": 70.33457018224004,
+          "max_us": 82.57050785687169,
+          "route": "VBA AST",
+          "reason": "",
+          "speedup": 1.0
+        },
+        {
+          "name": "Thunk",
+          "median_us": 73.67089847321034,
+          "min_us": 73.22539067899922,
+          "max_us": 78.88691402513359,
+          "route": "C thunk",
+          "reason": "",
+          "speedup": 0.973583954728925
+        },
+        {
+          "name": "Bytecode",
+          "median_us": 11.847924810126635,
+          "min_us": 11.686132836530298,
+          "max_us": 12.241601581308716,
+          "route": "Array bytecode",
+          "reason": "",
+          "speedup": 6.053786281853913
+        }
+      ]
+    },
+    {
+      "case": 2,
+      "name": "Strings",
+      "phase": 0,
+      "phase_name": "Create + compile",
+      "engines": [
+        {
+          "name": "VBA",
+          "median_us": 438.1562503112953,
+          "min_us": 427.42343794088754,
+          "max_us": 449.19375068275315,
+          "route": "VBA AST",
+          "reason": "",
+          "speedup": 1.0
+        },
+        {
+          "name": "Thunk",
+          "median_us": 765.6218749616531,
+          "min_us": 756.3125000160657,
+          "max_us": 787.2171863709813,
+          "route": "C thunk",
+          "reason": "",
+          "speedup": 0.5722880505905618
+        },
+        {
+          "name": "Bytecode",
+          "median_us": 435.4859374871016,
+          "min_us": 433.2421867729859,
+          "max_us": 440.4226565384305,
+          "route": "Array bytecode",
+          "reason": "",
+          "speedup": 1.0061318003506665
+        }
+      ]
+    },
+    {
+      "case": 2,
+      "name": "Strings",
+      "phase": 1,
+      "phase_name": "Create + compile + first run",
+      "engines": [
+        {
+          "name": "VBA",
+          "median_us": 609.1109371482156,
+          "min_us": 600.2859372529203,
+          "max_us": 619.3812496348985,
+          "route": "VBA AST",
+          "reason": "",
+          "speedup": 1.0
+        },
+        {
+          "name": "Thunk",
+          "median_us": 1131.9218720018407,
+          "min_us": 1108.3187491749406,
+          "max_us": 1141.9999973441,
+          "route": "C thunk",
+          "reason": "",
+          "speedup": 0.5381210065947246
+        },
+        {
+          "name": "Bytecode",
+          "median_us": 555.3187493205766,
+          "min_us": 546.2406243168516,
+          "max_us": 573.7796873290797,
+          "route": "Array bytecode",
+          "reason": "",
+          "speedup": 1.0968672278640923
+        }
+      ]
+    },
+    {
+      "case": 2,
+      "name": "Strings",
+      "phase": 2,
+      "phase_name": "Warm run",
+      "engines": [
+        {
+          "name": "VBA",
+          "median_us": 154.20703130075702,
+          "min_us": 150.77734360602344,
+          "max_us": 169.38867156568438,
+          "route": "VBA AST",
+          "reason": "",
+          "speedup": 1.0
+        },
+        {
+          "name": "Thunk",
+          "median_us": 253.17265681223907,
+          "min_us": 248.2625004631703,
+          "max_us": 257.98203114391094,
+          "route": "C thunk",
+          "reason": "",
+          "speedup": 0.6090982858987094
+        },
+        {
+          "name": "Bytecode",
+          "median_us": 15.601708980739208,
+          "min_us": 15.136572301344142,
+          "max_us": 15.883935589045018,
+          "route": "Array bytecode",
+          "reason": "",
+          "speedup": 9.883983318182025
+        }
+      ]
+    },
+    {
+      "case": 3,
+      "name": "COM collection",
+      "phase": 0,
+      "phase_name": "Create + compile",
+      "engines": [
+        {
+          "name": "VBA",
+          "median_us": 396.735155845818,
+          "min_us": 388.87968730705313,
+          "max_us": 403.5171878058461,
+          "route": "VBA AST",
+          "reason": "",
+          "speedup": 1.0
+        },
+        {
+          "name": "Thunk",
+          "median_us": 720.2687502285703,
+          "min_us": 708.165624018875,
+          "max_us": 735.137500669225,
+          "route": "C thunk",
+          "reason": "",
+          "speedup": 0.550815450094035
+        },
+        {
+          "name": "Bytecode",
+          "median_us": 393.746875488432,
+          "min_us": 386.98203206877184,
+          "max_us": 400.93828192766483,
+          "route": "Array bytecode",
+          "reason": "",
+          "speedup": 1.0075893436708014
+        }
+      ]
+    },
+    {
+      "case": 3,
+      "name": "COM collection",
+      "phase": 1,
+      "phase_name": "Create + compile + first run",
+      "engines": [
+        {
+          "name": "VBA",
+          "median_us": 540.8390625234453,
+          "min_us": 526.8593758955828,
+          "max_us": 549.93125013425,
+          "route": "VBA AST",
+          "reason": "",
+          "speedup": 1.0
+        },
+        {
+          "name": "Thunk",
+          "median_us": 966.95624961285,
+          "min_us": 955.4906246194156,
+          "max_us": 993.2437496900093,
+          "route": "C thunk",
+          "reason": "",
+          "speedup": 0.5593211303406813
+        },
+        {
+          "name": "Bytecode",
+          "median_us": 614.7874992166188,
+          "min_us": 600.7390638842485,
+          "max_us": 623.2750001800016,
+          "route": "Array bytecode",
+          "reason": "",
+          "speedup": 0.8797170781979123
+        }
+      ]
+    },
+    {
+      "case": 3,
+      "name": "COM collection",
+      "phase": 2,
+      "phase_name": "Warm run",
+      "engines": [
+        {
+          "name": "VBA",
+          "median_us": 123.97890623105937,
+          "min_us": 121.47421875852147,
+          "max_us": 135.77890604210546,
+          "route": "VBA AST",
+          "reason": "",
+          "speedup": 1.0
+        },
+        {
+          "name": "Thunk",
+          "median_us": 165.03359347552774,
+          "min_us": 163.33710937033163,
+          "max_us": 168.37812518133438,
+          "route": "C thunk",
+          "reason": "",
+          "speedup": 0.751234361563143
+        },
+        {
+          "name": "Bytecode",
+          "median_us": 114.48359373389376,
+          "min_us": 112.84531274213789,
+          "max_us": 116.60312520689337,
+          "route": "Array bytecode",
+          "reason": "",
+          "speedup": 1.082940377633817
+        }
+      ]
+    },
+    {
+      "case": 4,
+      "name": "For loop",
+      "phase": 0,
+      "phase_name": "Create + compile",
+      "engines": [
+        {
+          "name": "VBA",
+          "median_us": 994.5312522177126,
+          "min_us": 969.8781250335751,
+          "max_us": 1043.1249975226813,
+          "route": "VBA AST",
+          "reason": "",
+          "speedup": 1.0
+        },
+        {
+          "name": "Thunk",
+          "median_us": 1337.565623543925,
+          "min_us": 1301.7031233175655,
+          "max_us": 1351.2562509276906,
+          "route": "C thunk",
+          "reason": "",
+          "speedup": 0.7435382868039541
+        },
+        {
+          "name": "Bytecode",
+          "median_us": 995.4093729902531,
+          "min_us": 957.6874981576125,
+          "max_us": 1038.115624396597,
+          "route": "Array bytecode",
+          "reason": "",
+          "speedup": 0.9991178295117891
+        }
+      ]
+    },
+    {
+      "case": 4,
+      "name": "For loop",
+      "phase": 1,
+      "phase_name": "Create + compile + first run",
+      "engines": [
+        {
+          "name": "VBA",
+          "median_us": 86085.4000784457,
+          "min_us": 83070.4000545666,
+          "max_us": 101279.100053944,
+          "route": "VBA AST",
+          "reason": "",
+          "speedup": 1.0
+        },
+        {
+          "name": "Thunk",
+          "median_us": 74330.6999793276,
+          "min_us": 70208.799908869,
+          "max_us": 80770.600005053,
+          "route": "C thunk",
+          "reason": "",
+          "speedup": 1.1581405812455317
+        },
+        {
+          "name": "Bytecode",
+          "median_us": 6698.862503981212,
+          "min_us": 6660.437502432613,
+          "max_us": 6899.137501022775,
+          "route": "Array bytecode",
+          "reason": "",
+          "speedup": 12.850748918534176
+        }
+      ]
+    },
+    {
+      "case": 4,
+      "name": "For loop",
+      "phase": 2,
+      "phase_name": "Warm run",
+      "engines": [
+        {
+          "name": "VBA",
+          "median_us": 83010.800066404,
+          "min_us": 81821.99997827409,
+          "max_us": 124019.39998380799,
+          "route": "VBA AST",
+          "reason": "",
+          "speedup": 1.0
+        },
+        {
+          "name": "Thunk",
+          "median_us": 77841.8999398127,
+          "min_us": 74879.49996721,
+          "max_us": 78917.6999824122,
+          "route": "C thunk",
+          "reason": "",
+          "speedup": 1.0664025432394106
+        },
+        {
+          "name": "Bytecode",
+          "median_us": 5360.0874962285125,
+          "min_us": 5319.349991623312,
+          "max_us": 5402.512499131262,
+          "route": "Array bytecode",
+          "reason": "",
+          "speedup": 15.486836758693288
+        }
+      ]
+    },
+    {
+      "case": 5,
+      "name": "While + branches",
+      "phase": 0,
+      "phase_name": "Create + compile",
+      "engines": [
+        {
+          "name": "VBA",
+          "median_us": 1404.4218769413405,
+          "min_us": 1369.237499602603,
+          "max_us": 1453.1937486026438,
+          "route": "VBA AST",
+          "reason": "",
+          "speedup": 1.0
+        },
+        {
+          "name": "Thunk",
+          "median_us": 1742.8156243113344,
+          "min_us": 1704.9437519744968,
+          "max_us": 1866.6374999156687,
+          "route": "C thunk",
+          "reason": "",
+          "speedup": 0.8058350277277847
+        },
+        {
+          "name": "Bytecode",
+          "median_us": 1401.6968743817406,
+          "min_us": 1343.7500019790593,
+          "max_us": 1441.5250007004938,
+          "route": "Array bytecode",
+          "reason": "",
+          "speedup": 1.0019440740786427
+        }
+      ]
+    },
+    {
+      "case": 5,
+      "name": "While + branches",
+      "phase": 1,
+      "phase_name": "Create + compile + first run",
+      "engines": [
+        {
+          "name": "VBA",
+          "median_us": 48683.4000330418,
+          "min_us": 47716.1000017077,
+          "max_us": 51926.1999288574,
+          "route": "VBA AST",
+          "reason": "",
+          "speedup": 1.0
+        },
+        {
+          "name": "Thunk",
+          "median_us": 32892.400049604505,
+          "min_us": 32003.2000308856,
+          "max_us": 35423.1999954209,
+          "route": "C thunk",
+          "reason": "",
+          "speedup": 1.4800805036915257
+        },
+        {
+          "name": "Bytecode",
+          "median_us": 5206.962494412437,
+          "min_us": 5065.362507593813,
+          "max_us": 5292.5625059288,
+          "route": "Array bytecode",
+          "reason": "",
+          "speedup": 9.349673650479275
+        }
+      ]
+    },
+    {
+      "case": 5,
+      "name": "While + branches",
+      "phase": 2,
+      "phase_name": "Warm run",
+      "engines": [
+        {
+          "name": "VBA",
+          "median_us": 47878.1999554485,
+          "min_us": 46218.6000077054,
+          "max_us": 55127.5999750942,
+          "route": "VBA AST",
+          "reason": "",
+          "speedup": 1.0
+        },
+        {
+          "name": "Thunk",
+          "median_us": 33454.000018537,
+          "min_us": 32141.400035470702,
+          "max_us": 34263.6000132188,
+          "route": "C thunk",
+          "reason": "",
+          "speedup": 1.4311651799162728
+        },
+        {
+          "name": "Bytecode",
+          "median_us": 3454.87499726005,
+          "min_us": 3436.668746871875,
+          "max_us": 3522.4437451688564,
+          "route": "Array bytecode",
+          "reason": "",
+          "speedup": 13.858156950228057
+        }
+      ]
+    },
+    {
+      "case": 6,
+      "name": "Fibonacci",
+      "phase": 0,
+      "phase_name": "Create + compile",
+      "engines": [
+        {
+          "name": "VBA",
+          "median_us": 1013.8531251868687,
+          "min_us": 999.57187558175,
+          "max_us": 1043.759373715147,
+          "route": "VBA AST",
+          "reason": "",
+          "speedup": 1.0
+        },
+        {
+          "name": "Thunk",
+          "median_us": 1357.4281256296688,
+          "min_us": 1309.009374381275,
+          "max_us": 1396.0812502773467,
+          "route": "C thunk",
+          "reason": "",
+          "speedup": 0.7468926759688096
+        },
+        {
+          "name": "Bytecode",
+          "median_us": 1010.6156223628219,
+          "min_us": 986.2250008154656,
+          "max_us": 1032.584372296697,
+          "route": "Array bytecode",
+          "reason": "",
+          "speedup": 1.0032034957232083
+        }
+      ]
+    },
+    {
+      "case": 6,
+      "name": "Fibonacci",
+      "phase": 1,
+      "phase_name": "Create + compile + first run",
+      "engines": [
+        {
+          "name": "VBA",
+          "median_us": 85848.19990210241,
+          "min_us": 84729.8000007868,
+          "max_us": 91646.0999287665,
+          "route": "VBA AST",
+          "reason": "",
+          "speedup": 1.0
+        },
+        {
+          "name": "Thunk",
+          "median_us": 100837.400066666,
+          "min_us": 99463.2999645546,
+          "max_us": 102011.500042863,
+          "route": "C thunk",
+          "reason": "",
+          "speedup": 0.8513527703545126
+        },
+        {
+          "name": "Bytecode",
+          "median_us": 4373.6999941757,
+          "min_us": 4228.887497447425,
+          "max_us": 4538.92500081565,
+          "route": "Array bytecode",
+          "reason": "",
+          "speedup": 19.628278120681205
+        }
+      ]
+    },
+    {
+      "case": 6,
+      "name": "Fibonacci",
+      "phase": 2,
+      "phase_name": "Warm run",
+      "engines": [
+        {
+          "name": "VBA",
+          "median_us": 84652.2999927402,
+          "min_us": 83487.1000843123,
+          "max_us": 90567.5999820232,
+          "route": "VBA AST",
+          "reason": "",
+          "speedup": 1.0
+        },
+        {
+          "name": "Thunk",
+          "median_us": 97929.5000433922,
+          "min_us": 96903.8000330329,
+          "max_us": 99950.8999520913,
+          "route": "C thunk",
+          "reason": "",
+          "speedup": 0.8644208328974525
+        },
+        {
+          "name": "Bytecode",
+          "median_us": 3031.681248103269,
+          "min_us": 3002.1937564015375,
+          "max_us": 3048.1562498607686,
+          "route": "Array bytecode",
+          "reason": "",
+          "speedup": 27.922559485995365
+        }
+      ]
+    },
+    {
+      "case": 7,
+      "name": "Array callback",
+      "phase": 0,
+      "phase_name": "Create + compile",
+      "engines": [
+        {
+          "name": "VBA",
+          "median_us": 862.0546886959344,
+          "min_us": 841.478125948925,
+          "max_us": 916.471874006675,
+          "route": "VBA AST",
+          "reason": "",
+          "speedup": 1.0
+        },
+        {
+          "name": "Thunk",
+          "median_us": 1199.4187516393124,
+          "min_us": 1188.6593747476595,
+          "max_us": 1237.5124970276374,
+          "route": "C thunk",
+          "reason": "",
+          "speedup": 0.7187270396746059
+        },
+        {
+          "name": "Bytecode",
+          "median_us": 858.890623931075,
+          "min_us": 835.7062506547655,
+          "max_us": 908.2031247089625,
+          "route": "VBA fallback",
+          "reason": "method requiring callback/writeback resolution: foreach",
+          "speedup": 1.003683897200295
+        }
+      ]
+    },
+    {
+      "case": 7,
+      "name": "Array callback",
+      "phase": 1,
+      "phase_name": "Create + compile + first run",
+      "engines": [
+        {
+          "name": "VBA",
+          "median_us": 19936.7000022903,
+          "min_us": 19605.20003922285,
+          "max_us": 20510.6000066735,
+          "route": "VBA AST",
+          "reason": "",
+          "speedup": 1.0
+        },
+        {
+          "name": "Thunk",
+          "median_us": 21464.05004896225,
+          "min_us": 21183.600008953348,
+          "max_us": 21877.0000501536,
+          "route": "C thunk",
+          "reason": "",
+          "speedup": 0.9288414794417704
+        },
+        {
+          "name": "Bytecode",
+          "median_us": 20258.75000981615,
+          "min_us": 20061.649964190998,
+          "max_us": 20625.8000107482,
+          "route": "VBA fallback",
+          "reason": "method requiring callback/writeback resolution: foreach",
+          "speedup": 0.9841031649351611
+        }
+      ]
+    },
+    {
+      "case": 7,
+      "name": "Array callback",
+      "phase": 2,
+      "phase_name": "Warm run",
+      "engines": [
+        {
+          "name": "VBA",
+          "median_us": 18672.20003623515,
+          "min_us": 18333.899963181448,
+          "max_us": 19691.2999963388,
+          "route": "VBA AST",
+          "reason": "",
+          "speedup": 1.0
+        },
+        {
+          "name": "Thunk",
+          "median_us": 19982.8999466263,
+          "min_us": 19791.90000565725,
+          "max_us": 20137.60001864285,
+          "route": "C thunk",
+          "reason": "",
+          "speedup": 0.9344089239353652
+        },
+        {
+          "name": "Bytecode",
+          "median_us": 18620.2499899082,
+          "min_us": 18232.85000864415,
+          "max_us": 19153.94997922705,
+          "route": "VBA fallback",
+          "reason": "method requiring callback/writeback resolution: foreach",
+          "speedup": 1.0027899757712762
+        }
+      ]
+    },
+    {
+      "case": 8,
+      "name": "Arithmetic loop",
+      "phase": 0,
+      "phase_name": "Create + compile",
+      "engines": [
+        {
+          "name": "VBA",
+          "median_us": 1033.7312487536126,
+          "min_us": 1005.7593754027032,
+          "max_us": 1088.228123990122,
+          "route": "VBA AST",
+          "reason": "",
+          "speedup": 1.0
+        },
+        {
+          "name": "Thunk",
+          "median_us": 1368.4781260963061,
+          "min_us": 1326.8156253616312,
+          "max_us": 1396.3343772047656,
+          "route": "C thunk",
+          "reason": "",
+          "speedup": 0.7553874841261906
+        },
+        {
+          "name": "Bytecode",
+          "median_us": 1023.387500026728,
+          "min_us": 1008.1593754875937,
+          "max_us": 1051.4124987821563,
+          "route": "Array bytecode",
+          "reason": "",
+          "speedup": 1.0101073627796064
+        }
+      ]
+    },
+    {
+      "case": 8,
+      "name": "Arithmetic loop",
+      "phase": 1,
+      "phase_name": "Create + compile + first run",
+      "engines": [
+        {
+          "name": "VBA",
+          "median_us": 86704.200017266,
+          "min_us": 83833.2999264821,
+          "max_us": 96147.9000980034,
+          "route": "VBA AST",
+          "reason": "",
+          "speedup": 1.0
+        },
+        {
+          "name": "Thunk",
+          "median_us": 73283.8999247178,
+          "min_us": 71896.0000667721,
+          "max_us": 75934.3999670818,
+          "route": "C thunk",
+          "reason": "",
+          "speedup": 1.1831275369669798
+        },
+        {
+          "name": "Bytecode",
+          "median_us": 6709.7624996677,
+          "min_us": 6670.25000439025,
+          "max_us": 6899.87499208655,
+          "route": "Array bytecode",
+          "reason": "",
+          "speedup": 12.922096724222358
+        }
+      ]
+    },
+    {
+      "case": 8,
+      "name": "Arithmetic loop",
+      "phase": 2,
+      "phase_name": "Warm run",
+      "engines": [
+        {
+          "name": "VBA",
+          "median_us": 85548.3999475837,
+          "min_us": 79248.399939388,
+          "max_us": 90837.600058876,
+          "route": "VBA AST",
+          "reason": "",
+          "speedup": 1.0
+        },
+        {
+          "name": "Thunk",
+          "median_us": 78736.2999981269,
+          "min_us": 75490.8999660984,
+          "max_us": 80000.1000752673,
+          "route": "C thunk",
+          "reason": "",
+          "speedup": 1.0865179078724663
+        },
+        {
+          "name": "Bytecode",
+          "median_us": 5372.2999873571125,
+          "min_us": 5329.087507561775,
+          "max_us": 5474.375007906925,
+          "route": "Array bytecode",
+          "reason": "",
+          "speedup": 15.923980445788358
+        }
+      ]
+    },
+    {
+      "case": 9,
+      "name": "Recursive calls",
+      "phase": 0,
+      "phase_name": "Create + compile",
+      "engines": [
+        {
+          "name": "VBA",
+          "median_us": 1045.1999987708407,
+          "min_us": 1019.9125026701937,
+          "max_us": 1072.6624968810938,
+          "route": "VBA AST",
+          "reason": "",
+          "speedup": 1.0
+        },
+        {
+          "name": "Thunk",
+          "median_us": 1412.7374997769937,
+          "min_us": 1367.5968766619906,
+          "max_us": 1442.4031251110125,
+          "route": "C thunk",
+          "reason": "",
+          "speedup": 0.7398402031062599
+        },
+        {
+          "name": "Bytecode",
+          "median_us": 1042.1249971841469,
+          "min_us": 1026.4343727612875,
+          "max_us": 1081.1249994731031,
+          "route": "Array bytecode",
+          "reason": "",
+          "speedup": 1.0029507032217848
+        }
+      ]
+    },
+    {
+      "case": 9,
+      "name": "Recursive calls",
+      "phase": 1,
+      "phase_name": "Create + compile + first run",
+      "engines": [
+        {
+          "name": "VBA",
+          "median_us": 86333.49998854099,
+          "min_us": 84660.9999425709,
+          "max_us": 91953.8999442011,
+          "route": "VBA AST",
+          "reason": "",
+          "speedup": 1.0
+        },
+        {
+          "name": "Thunk",
+          "median_us": 100461.0999953,
+          "min_us": 99209.0000072494,
+          "max_us": 101602.900074795,
+          "route": "C thunk",
+          "reason": "",
+          "speedup": 0.8593724336343126
+        },
+        {
+          "name": "Bytecode",
+          "median_us": 4329.7874944983,
+          "min_us": 4263.987488229763,
+          "max_us": 4424.924991326413,
+          "route": "Array bytecode",
+          "reason": "",
+          "speedup": 19.93943123034139
+        }
+      ]
+    },
+    {
+      "case": 9,
+      "name": "Recursive calls",
+      "phase": 2,
+      "phase_name": "Warm run",
+      "engines": [
+        {
+          "name": "VBA",
+          "median_us": 85539.6999977529,
+          "min_us": 82765.9000642598,
+          "max_us": 90975.3000596538,
+          "route": "VBA AST",
+          "reason": "",
+          "speedup": 1.0
+        },
+        {
+          "name": "Thunk",
+          "median_us": 98440.69997780031,
+          "min_us": 97329.7000164166,
+          "max_us": 99455.90002462271,
+          "route": "C thunk",
+          "reason": "",
+          "speedup": 0.8689464826747804
+        },
+        {
+          "name": "Bytecode",
+          "median_us": 2988.2374947192125,
+          "min_us": 2955.2062478615003,
+          "max_us": 3029.4250027509374,
+          "route": "Array bytecode",
+          "reason": "",
+          "speedup": 28.625469076309336
+        }
+      ]
+    },
+    {
+      "case": 10,
+      "name": "String building",
+      "phase": 0,
+      "phase_name": "Create + compile",
+      "engines": [
+        {
+          "name": "VBA",
+          "median_us": 1025.1218736812,
+          "min_us": 984.6875000221187,
+          "max_us": 1071.7187506088533,
+          "route": "VBA AST",
+          "reason": "",
+          "speedup": 1.0
+        },
+        {
+          "name": "Thunk",
+          "median_us": 1356.9999973697124,
+          "min_us": 1323.4437501523657,
+          "max_us": 1376.7718737653938,
+          "route": "C thunk",
+          "reason": "",
+          "speedup": 0.7554324802271221
+        },
+        {
+          "name": "Bytecode",
+          "median_us": 1017.5843744946187,
+          "min_us": 985.2843759290406,
+          "max_us": 1035.159377352103,
+          "route": "Array bytecode",
+          "reason": "",
+          "speedup": 1.007407247374769
+        }
+      ]
+    },
+    {
+      "case": 10,
+      "name": "String building",
+      "phase": 1,
+      "phase_name": "Create + compile + first run",
+      "engines": [
+        {
+          "name": "VBA",
+          "median_us": 22316.45002029835,
+          "min_us": 21913.6499799788,
+          "max_us": 27048.7999659963,
+          "route": "VBA AST",
+          "reason": "",
+          "speedup": 1.0
+        },
+        {
+          "name": "Thunk",
+          "median_us": 25442.90001969785,
+          "min_us": 24777.0000132732,
+          "max_us": 27682.64996120705,
+          "route": "C thunk",
+          "reason": "",
+          "speedup": 0.8771189606145917
+        },
+        {
+          "name": "Bytecode",
+          "median_us": 3625.41875074385,
+          "min_us": 3560.38125028135,
+          "max_us": 3710.718745423944,
+          "route": "Array bytecode",
+          "reason": "",
+          "speedup": 6.155551001031134
+        }
+      ]
+    },
+    {
+      "case": 10,
+      "name": "String building",
+      "phase": 2,
+      "phase_name": "Warm run",
+      "engines": [
+        {
+          "name": "VBA",
+          "median_us": 21373.4499993734,
+          "min_us": 20465.9999581054,
+          "max_us": 24071.74999825655,
+          "route": "VBA AST",
+          "reason": "",
+          "speedup": 1.0
+        },
+        {
+          "name": "Thunk",
+          "median_us": 23450.4999825731,
+          "min_us": 22916.8999940157,
+          "max_us": 25468.0499783717,
+          "route": "C thunk",
+          "reason": "",
+          "speedup": 0.9114283284048004
+        },
+        {
+          "name": "Bytecode",
+          "median_us": 2371.0250025033,
+          "min_us": 2338.962505746169,
+          "max_us": 2416.6374932974563,
+          "route": "Array bytecode",
+          "reason": "",
+          "speedup": 9.014434675639254
+        }
+      ]
+    },
+    {
+      "case": 11,
+      "name": "Array methods",
+      "phase": 0,
+      "phase_name": "Create + compile",
+      "engines": [
+        {
+          "name": "VBA",
+          "median_us": 2076.593751553444,
+          "min_us": 2035.4749940452189,
+          "max_us": 2268.2812486891626,
+          "route": "VBA AST",
+          "reason": "",
+          "speedup": 1.0
+        },
+        {
+          "name": "Thunk",
+          "median_us": 2462.231248500756,
+          "min_us": 2392.631249676925,
+          "max_us": 2659.068748471325,
+          "route": "C thunk",
+          "reason": "",
+          "speedup": 0.843378847059095
+        },
+        {
+          "name": "Bytecode",
+          "median_us": 2080.9312482015252,
+          "min_us": 2044.1625019884686,
+          "max_us": 2155.45624814695,
+          "route": "VBA fallback",
+          "reason": "method requiring callback/writeback resolution: push",
+          "speedup": 0.9979155982919521
+        }
+      ]
+    },
+    {
+      "case": 11,
+      "name": "Array methods",
+      "phase": 1,
+      "phase_name": "Create + compile + first run",
+      "engines": [
+        {
+          "name": "VBA",
+          "median_us": 66385.1000135764,
+          "min_us": 65225.8999180049,
+          "max_us": 76494.0999215469,
+          "route": "VBA AST",
+          "reason": "",
+          "speedup": 1.0
+        },
+        {
+          "name": "Thunk",
+          "median_us": 87931.8000515923,
+          "min_us": 86489.100009203,
+          "max_us": 92010.40002517399,
+          "route": "C thunk",
+          "reason": "",
+          "speedup": 0.7549612310293456
+        },
+        {
+          "name": "Bytecode",
+          "median_us": 68606.5999325365,
+          "min_us": 66442.7999872714,
+          "max_us": 76373.1999322772,
+          "route": "VBA fallback",
+          "reason": "method requiring callback/writeback resolution: push",
+          "speedup": 0.9676197345278067
+        }
+      ]
+    },
+    {
+      "case": 11,
+      "name": "Array methods",
+      "phase": 2,
+      "phase_name": "Warm run",
+      "engines": [
+        {
+          "name": "VBA",
+          "median_us": 63669.70005910839,
+          "min_us": 63247.0001000911,
+          "max_us": 67031.3000446185,
+          "route": "VBA AST",
+          "reason": "",
+          "speedup": 1.0
+        },
+        {
+          "name": "Thunk",
+          "median_us": 84791.9000079855,
+          "min_us": 83809.099975042,
+          "max_us": 89472.0000214875,
+          "route": "C thunk",
+          "reason": "",
+          "speedup": 0.7508936591008355
+        },
+        {
+          "name": "Bytecode",
+          "median_us": 65932.8000620008,
+          "min_us": 63562.40005698061,
+          "max_us": 69047.3000286147,
+          "route": "VBA fallback",
+          "reason": "method requiring callback/writeback resolution: push",
+          "speedup": 0.9656756576277018
+        }
+      ]
+    },
+    {
+      "case": 12,
+      "name": "Object properties",
+      "phase": 0,
+      "phase_name": "Create + compile",
+      "engines": [
+        {
+          "name": "VBA",
+          "median_us": 1446.5874992311,
+          "min_us": 1418.1750011630343,
+          "max_us": 1514.343748567625,
+          "route": "VBA AST",
+          "reason": "",
+          "speedup": 1.0
+        },
+        {
+          "name": "Thunk",
+          "median_us": 1774.6624980645718,
+          "min_us": 1742.7343736926562,
+          "max_us": 1906.5406268055094,
+          "route": "C thunk",
+          "reason": "",
+          "speedup": 0.8151338639367954
+        },
+        {
+          "name": "Bytecode",
+          "median_us": 1459.3874984711874,
+          "min_us": 1398.6999983899282,
+          "max_us": 1507.9531258379561,
+          "route": "Array bytecode",
+          "reason": "",
+          "speedup": 0.9912291976918425
+        }
+      ]
+    },
+    {
+      "case": 12,
+      "name": "Object properties",
+      "phase": 1,
+      "phase_name": "Create + compile + first run",
+      "engines": [
+        {
+          "name": "VBA",
+          "median_us": 60250.099981203704,
+          "min_us": 58730.5000517517,
+          "max_us": 61401.900020428,
+          "route": "VBA AST",
+          "reason": "",
+          "speedup": 1.0
+        },
+        {
+          "name": "Thunk",
+          "median_us": 99976.7000321299,
+          "min_us": 98434.8999336362,
+          "max_us": 104247.00006842599,
+          "route": "C thunk",
+          "reason": "",
+          "speedup": 0.6026414150681199
+        },
+        {
+          "name": "Bytecode",
+          "median_us": 45426.7000313848,
+          "min_us": 44912.9000771791,
+          "max_us": 47236.100072041205,
+          "route": "Array bytecode",
+          "reason": "",
+          "speedup": 1.3263146990553483
+        }
+      ]
+    },
+    {
+      "case": 12,
+      "name": "Object properties",
+      "phase": 2,
+      "phase_name": "Warm run",
+      "engines": [
+        {
+          "name": "VBA",
+          "median_us": 60173.8999830559,
+          "min_us": 56070.099934004196,
+          "max_us": 69407.9999811947,
+          "route": "VBA AST",
+          "reason": "",
+          "speedup": 1.0
+        },
+        {
+          "name": "Thunk",
+          "median_us": 96239.3999798223,
+          "min_us": 94301.7000099644,
+          "max_us": 98663.7000460178,
+          "route": "C thunk",
+          "reason": "",
+          "speedup": 0.6252522355259078
+        },
+        {
+          "name": "Bytecode",
+          "median_us": 43794.1999407485,
+          "min_us": 42625.4000049084,
+          "max_us": 44489.0999933705,
+          "route": "Array bytecode",
+          "reason": "",
+          "speedup": 1.3740152820343416
+        }
+      ]
+    },
+    {
+      "case": 13,
+      "name": "Closures",
+      "phase": 0,
+      "phase_name": "Create + compile",
+      "engines": [
+        {
+          "name": "VBA",
+          "median_us": 1647.2593779326405,
+          "min_us": 1614.4281253218658,
+          "max_us": 1757.6718746568063,
+          "route": "VBA AST",
+          "reason": "",
+          "speedup": 1.0
+        },
+        {
+          "name": "Thunk",
+          "median_us": 2016.824997554069,
+          "min_us": 1950.4875017446439,
+          "max_us": 2185.9874977963063,
+          "route": "C thunk",
+          "reason": "",
+          "speedup": 0.8167587073396929
+        },
+        {
+          "name": "Bytecode",
+          "median_us": 1656.9468716625124,
+          "min_us": 1621.3781236729126,
+          "max_us": 1689.0968763618719,
+          "route": "VBA fallback",
+          "reason": "builtin/host call: f",
+          "speedup": 0.994153407151702
+        }
+      ]
+    },
+    {
+      "case": 13,
+      "name": "Closures",
+      "phase": 1,
+      "phase_name": "Create + compile + first run",
+      "engines": [
+        {
+          "name": "VBA",
+          "median_us": 40072.6000079885,
+          "min_us": 38468.2000149041,
+          "max_us": 54653.0999708921,
+          "route": "VBA AST",
+          "reason": "",
+          "speedup": 1.0
+        },
+        {
+          "name": "Thunk",
+          "median_us": 55719.399941153795,
+          "min_us": 53684.2999281362,
+          "max_us": 57228.300021961295,
+          "route": "C thunk",
+          "reason": "",
+          "speedup": 0.7191857782084848
+        },
+        {
+          "name": "Bytecode",
+          "median_us": 41442.499961704,
+          "min_us": 38835.8000200242,
+          "max_us": 42876.5000542626,
+          "route": "VBA fallback",
+          "reason": "builtin/host call: f",
+          "speedup": 0.9669445628284636
+        }
+      ]
+    },
+    {
+      "case": 13,
+      "name": "Closures",
+      "phase": 2,
+      "phase_name": "Warm run",
+      "engines": [
+        {
+          "name": "VBA",
+          "median_us": 39552.7000073344,
+          "min_us": 37127.9999380931,
+          "max_us": 52980.8000428602,
+          "route": "VBA AST",
+          "reason": "",
+          "speedup": 1.0
+        },
+        {
+          "name": "Thunk",
+          "median_us": 52061.7000292987,
+          "min_us": 51607.7999491245,
+          "max_us": 55537.7000709996,
+          "route": "C thunk",
+          "reason": "",
+          "speedup": 0.7597274000863471
+        },
+        {
+          "name": "Bytecode",
+          "median_us": 37915.5999980867,
+          "min_us": 35632.8999623656,
+          "max_us": 41125.2999911085,
+          "route": "VBA fallback",
+          "reason": "builtin/host call: f",
+          "speedup": 1.0431774786454735
+        }
+      ]
+    },
+    {
+      "case": 14,
+      "name": "While and branches",
+      "phase": 0,
+      "phase_name": "Create + compile",
+      "engines": [
+        {
+          "name": "VBA",
+          "median_us": 1502.5531247374593,
+          "min_us": 1432.5687516247842,
+          "max_us": 1574.296875332947,
+          "route": "VBA AST",
+          "reason": "",
+          "speedup": 1.0
+        },
+        {
+          "name": "Thunk",
+          "median_us": 1804.621875635347,
+          "min_us": 1794.4937499123625,
+          "max_us": 1894.4500006909936,
+          "route": "C thunk",
+          "reason": "",
+          "speedup": 0.8326138262113556
+        },
+        {
+          "name": "Bytecode",
+          "median_us": 1454.2250028171127,
+          "min_us": 1440.912499674597,
+          "max_us": 1528.3656248357156,
+          "route": "Array bytecode",
+          "reason": "",
+          "speedup": 1.0332329053803406
+        }
+      ]
+    },
+    {
+      "case": 14,
+      "name": "While and branches",
+      "phase": 1,
+      "phase_name": "Create + compile + first run",
+      "engines": [
+        {
+          "name": "VBA",
+          "median_us": 50609.7000325099,
+          "min_us": 47620.9999760613,
+          "max_us": 57799.2000617087,
+          "route": "VBA AST",
+          "reason": "",
+          "speedup": 1.0
+        },
+        {
+          "name": "Thunk",
+          "median_us": 32765.599898993998,
+          "min_us": 31973.7999234349,
+          "max_us": 35256.7000081763,
+          "route": "C thunk",
+          "reason": "",
+          "speedup": 1.544598609167042
+        },
+        {
+          "name": "Bytecode",
+          "median_us": 5274.7249865206,
+          "min_us": 5165.5375136761,
+          "max_us": 5344.024990336037,
+          "route": "Array bytecode",
+          "reason": "",
+          "speedup": 9.594756155409325
+        }
+      ]
+    },
+    {
+      "case": 14,
+      "name": "While and branches",
+      "phase": 2,
+      "phase_name": "Warm run",
+      "engines": [
+        {
+          "name": "VBA",
+          "median_us": 51193.1000510231,
+          "min_us": 47978.3999035135,
+          "max_us": 55636.3000068814,
+          "route": "VBA AST",
+          "reason": "",
+          "speedup": 1.0
+        },
+        {
+          "name": "Thunk",
+          "median_us": 33390.6000014395,
+          "min_us": 32972.5999617949,
+          "max_us": 34013.0999684334,
+          "route": "C thunk",
+          "reason": "",
+          "speedup": 1.533159034243653
+        },
+        {
+          "name": "Bytecode",
+          "median_us": 3447.1500039217062,
+          "min_us": 3421.881250687875,
+          "max_us": 3502.400002616925,
+          "route": "Array bytecode",
+          "reason": "",
+          "speedup": 14.850847799713515
+        }
+      ]
+    },
+    {
+      "case": 15,
+      "name": "Template literals",
+      "phase": 0,
+      "phase_name": "Create + compile",
+      "engines": [
+        {
+          "name": "VBA",
+          "median_us": 1227.0437473489437,
+          "min_us": 1203.7656233587782,
+          "max_us": 1254.2218755697845,
+          "route": "VBA AST",
+          "reason": "",
+          "speedup": 1.0
+        },
+        {
+          "name": "Thunk",
+          "median_us": 1596.0874989104939,
+          "min_us": 1571.7656242486562,
+          "max_us": 1676.8374989624124,
+          "route": "C thunk",
+          "reason": "",
+          "speedup": 0.7687822554756784
+        },
+        {
+          "name": "Bytecode",
+          "median_us": 1228.7156278034688,
+          "min_us": 1212.4749991926376,
+          "max_us": 1310.990624915575,
+          "route": "Array bytecode",
+          "reason": "",
+          "speedup": 0.9986393267761119
+        }
+      ]
+    },
+    {
+      "case": 15,
+      "name": "Template literals",
+      "phase": 1,
+      "phase_name": "Create + compile + first run",
+      "engines": [
+        {
+          "name": "VBA",
+          "median_us": 45678.899972699604,
+          "min_us": 44534.5001062378,
+          "max_us": 49386.4000309259,
+          "route": "VBA AST",
+          "reason": "",
+          "speedup": 1.0
+        },
+        {
+          "name": "Thunk",
+          "median_us": 78781.2999915332,
+          "min_us": 77334.6999194473,
+          "max_us": 79465.7000806183,
+          "route": "C thunk",
+          "reason": "",
+          "speedup": 0.579819068454174
+        },
+        {
+          "name": "Bytecode",
+          "median_us": 3917.6124992081877,
+          "min_us": 3854.900001897475,
+          "max_us": 4132.412504986863,
+          "route": "Array bytecode",
+          "reason": "",
+          "speedup": 11.659882130234177
+        }
+      ]
+    },
+    {
+      "case": 15,
+      "name": "Template literals",
+      "phase": 2,
+      "phase_name": "Warm run",
+      "engines": [
+        {
+          "name": "VBA",
+          "median_us": 44558.3000546321,
+          "min_us": 43416.0999720916,
+          "max_us": 46642.1999735758,
+          "route": "VBA AST",
+          "reason": "",
+          "speedup": 1.0
+        },
+        {
+          "name": "Thunk",
+          "median_us": 77045.29992770399,
+          "min_us": 76045.9000011906,
+          "max_us": 79723.90006762,
+          "route": "C thunk",
+          "reason": "",
+          "speedup": 0.5783389784509074
+        },
+        {
+          "name": "Bytecode",
+          "median_us": 2401.0937486309563,
+          "min_us": 2370.3812548774313,
+          "max_us": 2409.125001577194,
+          "route": "Array bytecode",
+          "reason": "",
+          "speedup": 18.55750117213796
+        }
+      ]
+    },
+    {
+      "case": 16,
+      "name": "Array indexing",
+      "phase": 0,
+      "phase_name": "Create + compile",
+      "engines": [
+        {
+          "name": "VBA",
+          "median_us": 2029.7187438700373,
+          "min_us": 1993.3125004172311,
+          "max_us": 2207.21874939045,
+          "route": "VBA AST",
+          "reason": "",
+          "speedup": 1.0
+        },
+        {
+          "name": "Thunk",
+          "median_us": 2392.51875609625,
+          "min_us": 2310.0874968804437,
+          "max_us": 2466.600002662744,
+          "route": "C thunk",
+          "reason": "",
+          "speedup": 0.8483606403077171
+        },
+        {
+          "name": "Bytecode",
+          "median_us": 2069.174995995125,
+          "min_us": 1973.4624947886937,
+          "max_us": 2235.6250046868813,
+          "route": "Array bytecode",
+          "reason": "",
+          "speedup": 0.9809314087974894
+        }
+      ]
+    },
+    {
+      "case": 16,
+      "name": "Array indexing",
+      "phase": 1,
+      "phase_name": "Create + compile + first run",
+      "engines": [
+        {
+          "name": "VBA",
+          "median_us": 26287.0999868028,
+          "min_us": 25609.55000808465,
+          "max_us": 30214.0500280075,
+          "route": "VBA AST",
+          "reason": "",
+          "speedup": 1.0
+        },
+        {
+          "name": "Thunk",
+          "median_us": 34450.700040906704,
+          "min_us": 33820.3000137582,
+          "max_us": 36349.6000645682,
+          "route": "C thunk",
+          "reason": "",
+          "speedup": 0.7630352926236489
+        },
+        {
+          "name": "Bytecode",
+          "median_us": 19698.75005306675,
+          "min_us": 19431.24999525025,
+          "max_us": 19915.699958801248,
+          "route": "Array bytecode",
+          "reason": "",
+          "speedup": 1.3344552276661006
+        }
+      ]
+    },
+    {
+      "case": 16,
+      "name": "Array indexing",
+      "phase": 2,
+      "phase_name": "Warm run",
+      "engines": [
+        {
+          "name": "VBA",
+          "median_us": 23399.649944622048,
+          "min_us": 22876.30003411325,
+          "max_us": 24684.750009328152,
+          "route": "VBA AST",
+          "reason": "",
+          "speedup": 1.0
+        },
+        {
+          "name": "Thunk",
+          "median_us": 32220.2999377623,
+          "min_us": 31329.4000225142,
+          "max_us": 33749.4999403134,
+          "route": "C thunk",
+          "reason": "",
+          "speedup": 0.7262393581009958
+        },
+        {
+          "name": "Bytecode",
+          "median_us": 17133.8000218384,
+          "min_us": 16838.9500468038,
+          "max_us": 17439.84996574,
+          "route": "Array bytecode",
+          "reason": "",
+          "speedup": 1.365701123790246
+        }
+      ]
+    },
+    {
+      "case": 17,
+      "name": "Nested arrays",
+      "phase": 0,
+      "phase_name": "Create + compile",
+      "engines": [
+        {
+          "name": "VBA",
+          "median_us": 2539.612498367206,
+          "min_us": 2496.0937516880253,
+          "max_us": 2645.012500579469,
+          "route": "VBA AST",
+          "reason": "",
+          "speedup": 1.0
+        },
+        {
+          "name": "Thunk",
+          "median_us": 2891.206248023081,
+          "min_us": 2800.8937442791625,
+          "max_us": 3187.9187517915875,
+          "route": "C thunk",
+          "reason": "",
+          "speedup": 0.8783920206674
+        },
+        {
+          "name": "Bytecode",
+          "median_us": 2578.531246399506,
+          "min_us": 2504.6375012607314,
+          "max_us": 2629.2687471141126,
+          "route": "Array bytecode",
+          "reason": "",
+          "speedup": 0.9849066215169416
+        }
+      ]
+    },
+    {
+      "case": 17,
+      "name": "Nested arrays",
+      "phase": 1,
+      "phase_name": "Create + compile + first run",
+      "engines": [
+        {
+          "name": "VBA",
+          "median_us": 40050.6999576464,
+          "min_us": 37806.399981491304,
+          "max_us": 40438.800002448304,
+          "route": "VBA AST",
+          "reason": "",
+          "speedup": 1.0
+        },
+        {
+          "name": "Thunk",
+          "median_us": 54619.5000642911,
+          "min_us": 53769.7999970987,
+          "max_us": 56077.6999918744,
+          "route": "C thunk",
+          "reason": "",
+          "speedup": 0.7332674211683342
+        },
+        {
+          "name": "Bytecode",
+          "median_us": 28613.4000052698,
+          "min_us": 28240.09995674715,
+          "max_us": 29314.39998792485,
+          "route": "Array bytecode",
+          "reason": "",
+          "speedup": 1.399718312059041
+        }
+      ]
+    },
+    {
+      "case": 17,
+      "name": "Nested arrays",
+      "phase": 2,
+      "phase_name": "Warm run",
+      "engines": [
+        {
+          "name": "VBA",
+          "median_us": 35878.899972885796,
+          "min_us": 34752.8000129387,
+          "max_us": 37228.4000040963,
+          "route": "VBA AST",
+          "reason": "",
+          "speedup": 1.0
+        },
+        {
+          "name": "Thunk",
+          "median_us": 50378.4000175074,
+          "min_us": 49850.400071591095,
+          "max_us": 52036.400069482595,
+          "route": "C thunk",
+          "reason": "",
+          "speedup": 0.7121881592193724
+        },
+        {
+          "name": "Bytecode",
+          "median_us": 25212.150008883353,
+          "min_us": 25066.60000653935,
+          "max_us": 25495.000008959298,
+          "route": "Array bytecode",
+          "reason": "",
+          "speedup": 1.4230797437046852
+        }
+      ]
+    },
+    {
+      "case": 18,
+      "name": "Classes",
+      "phase": 0,
+      "phase_name": "Create + compile",
+      "engines": [
+        {
+          "name": "VBA",
+          "median_us": 1637.296874832828,
+          "min_us": 1609.7593761514875,
+          "max_us": 1678.9343753771407,
+          "route": "VBA AST",
+          "reason": "",
+          "speedup": 1.0
+        },
+        {
+          "name": "Thunk",
+          "median_us": 2022.44999672985,
+          "min_us": 1960.2937536546938,
+          "max_us": 2079.993748338894,
+          "route": "C thunk",
+          "reason": "",
+          "speedup": 0.8095611152217431
+        },
+        {
+          "name": "Bytecode",
+          "median_us": 1662.3500014247843,
+          "min_us": 1637.5031264033155,
+          "max_us": 1749.4999992777593,
+          "route": "VBA fallback",
+          "reason": "statement: ClassDecl",
+          "speedup": 0.9849290904018507
+        }
+      ]
+    },
+    {
+      "case": 18,
+      "name": "Classes",
+      "phase": 1,
+      "phase_name": "Create + compile + first run",
+      "engines": [
+        {
+          "name": "VBA",
+          "median_us": 42984.400060959204,
+          "min_us": 41010.2000460029,
+          "max_us": 46611.8000913411,
+          "route": "VBA AST",
+          "reason": "",
+          "speedup": 1.0
+        },
+        {
+          "name": "Thunk",
+          "median_us": 66865.9000657499,
+          "min_us": 66079.2000126094,
+          "max_us": 74202.3999337107,
+          "route": "C thunk",
+          "reason": "",
+          "speedup": 0.6428448584209921
+        },
+        {
+          "name": "Bytecode",
+          "median_us": 42404.1000660509,
+          "min_us": 41902.199969627,
+          "max_us": 43787.6000069082,
+          "route": "VBA fallback",
+          "reason": "statement: ClassDecl",
+          "speedup": 1.0136849972998931
+        }
+      ]
+    },
+    {
+      "case": 18,
+      "name": "Classes",
+      "phase": 2,
+      "phase_name": "Warm run",
+      "engines": [
+        {
+          "name": "VBA",
+          "median_us": 41324.7999968007,
+          "min_us": 38848.8000025973,
+          "max_us": 44859.9000228569,
+          "route": "VBA AST",
+          "reason": "",
+          "speedup": 1.0
+        },
+        {
+          "name": "Thunk",
+          "median_us": 64957.2999682277,
+          "min_us": 62361.1999908462,
+          "max_us": 67458.3999207243,
+          "route": "C thunk",
+          "reason": "",
+          "speedup": 0.636184078109985
+        },
+        {
+          "name": "Bytecode",
+          "median_us": 41664.9000253528,
+          "min_us": 40275.0000357628,
+          "max_us": 43953.5999903455,
+          "route": "VBA fallback",
+          "reason": "statement: ClassDecl",
+          "speedup": 0.9918372532192529
+        }
+      ]
+    },
+    {
+      "case": 19,
+      "name": "Materials ledger",
+      "phase": 0,
+      "phase_name": "Create + compile",
+      "engines": [
+        {
+          "name": "VBA",
+          "median_us": 1427.6406254793967,
+          "min_us": 1366.4312500623064,
+          "max_us": 1595.8375006448468,
+          "route": "VBA AST",
+          "reason": "",
+          "speedup": 1.0
+        },
+        {
+          "name": "Thunk",
+          "median_us": 1786.593751603503,
+          "min_us": 1740.3499987267437,
+          "max_us": 1916.5062512911375,
+          "route": "C thunk",
+          "reason": "",
+          "speedup": 0.7990852000898699
+        },
+        {
+          "name": "Bytecode",
+          "median_us": 1451.8875032081282,
+          "min_us": 1373.7187473452657,
+          "max_us": 1623.0250002990938,
+          "route": "Array bytecode",
+          "reason": "",
+          "speedup": 0.9832997545091097
+        }
+      ]
+    },
+    {
+      "case": 19,
+      "name": "Materials ledger",
+      "phase": 1,
+      "phase_name": "Create + compile + first run",
+      "engines": [
+        {
+          "name": "VBA",
+          "median_us": 1705.415626929606,
+          "min_us": 1669.1781238478156,
+          "max_us": 1784.2812521848812,
+          "route": "VBA AST",
+          "reason": "",
+          "speedup": 1.0
+        },
+        {
+          "name": "Thunk",
+          "median_us": 2522.1000032615875,
+          "min_us": 2451.0312505299253,
+          "max_us": 2630.368755490056,
+          "route": "C thunk",
+          "reason": "",
+          "speedup": 0.6761887414155495
+        },
+        {
+          "name": "Bytecode",
+          "median_us": 1713.5281232185655,
+          "min_us": 1675.3874988353343,
+          "max_us": 1943.7843729974686,
+          "route": "Array bytecode",
+          "reason": "",
+          "speedup": 0.9952656182416654
+        }
+      ]
+    },
+    {
+      "case": 19,
+      "name": "Materials ledger",
+      "phase": 2,
+      "phase_name": "Warm run",
+      "engines": [
+        {
+          "name": "VBA",
+          "median_us": 224.9046874567285,
+          "min_us": 215.46406287598086,
+          "max_us": 237.56796872476133,
+          "route": "VBA AST",
+          "reason": "",
+          "speedup": 1.0
+        },
+        {
+          "name": "Thunk",
+          "median_us": 416.0929693171055,
+          "min_us": 408.35234358382894,
+          "max_us": 426.3960936441438,
+          "route": "C thunk",
+          "reason": "",
+          "speedup": 0.5405154714001622
+        },
+        {
+          "name": "Bytecode",
+          "median_us": 66.35898421336601,
+          "min_us": 66.02812504752363,
+          "max_us": 67.65917964912656,
+          "route": "Array bytecode",
+          "reason": "",
+          "speedup": 3.389212329314532
+        }
+      ]
+    },
+    {
+      "case": 20,
+      "name": "Payroll filter/reduce",
+      "phase": 0,
+      "phase_name": "Create + compile",
+      "engines": [
+        {
+          "name": "VBA",
+          "median_us": 1943.3124980423624,
+          "min_us": 1868.6562470975311,
+          "max_us": 2009.8875029361811,
+          "route": "VBA AST",
+          "reason": "",
+          "speedup": 1.0
+        },
+        {
+          "name": "Thunk",
+          "median_us": 2311.43749988405,
+          "min_us": 2207.5687520555252,
+          "max_us": 2391.8062506709252,
+          "route": "C thunk",
+          "reason": "",
+          "speedup": 0.8407376354064715
+        },
+        {
+          "name": "Bytecode",
+          "median_us": 1908.243750222025,
+          "min_us": 1880.6562511599625,
+          "max_us": 1971.3687433977625,
+          "route": "VBA fallback",
+          "reason": "method requiring callback/writeback resolution: reduce",
+          "speedup": 1.0183774991094598
+        }
+      ]
+    },
+    {
+      "case": 20,
+      "name": "Payroll filter/reduce",
+      "phase": 1,
+      "phase_name": "Create + compile + first run",
+      "engines": [
+        {
+          "name": "VBA",
+          "median_us": 2373.162496951406,
+          "min_us": 2322.7249985211497,
+          "max_us": 2455.5812560720374,
+          "route": "VBA AST",
+          "reason": "",
+          "speedup": 1.0
+        },
+        {
+          "name": "Thunk",
+          "median_us": 3349.056249135175,
+          "min_us": 3303.8749970728563,
+          "max_us": 3410.7562532881248,
+          "route": "C thunk",
+          "reason": "",
+          "speedup": 0.7086063417311149
+        },
+        {
+          "name": "Bytecode",
+          "median_us": 2857.512503396719,
+          "min_us": 2762.5125003396565,
+          "max_us": 2969.550005218481,
+          "route": "VBA fallback",
+          "reason": "method requiring callback/writeback resolution: reduce",
+          "speedup": 0.8304994270822728
+        }
+      ]
+    },
+    {
+      "case": 20,
+      "name": "Payroll filter/reduce",
+      "phase": 2,
+      "phase_name": "Warm run",
+      "engines": [
+        {
+          "name": "VBA",
+          "median_us": 396.1148431699258,
+          "min_us": 385.97734328504924,
+          "max_us": 404.8734381285609,
+          "route": "VBA AST",
+          "reason": "",
+          "speedup": 1.0
+        },
+        {
+          "name": "Thunk",
+          "median_us": 683.6374996055391,
+          "min_us": 666.3781241513781,
+          "max_us": 722.0671886898343,
+          "route": "C thunk",
+          "reason": "",
+          "speedup": 0.579422345027131
+        },
+        {
+          "name": "Bytecode",
+          "median_us": 396.07031249033747,
+          "min_us": 390.5937501258453,
+          "max_us": 456.25937491422496,
+          "route": "VBA fallback",
+          "reason": "method requiring callback/writeback resolution: reduce",
+          "speedup": 1.0001124312481497
+        }
+      ]
+    },
+    {
+      "case": 21,
+      "name": "Caught error",
+      "phase": 0,
+      "phase_name": "Create + compile",
+      "engines": [
+        {
+          "name": "VBA",
+          "median_us": 1540.3156248794407,
+          "min_us": 1477.8062504774439,
+          "max_us": 1657.9062503296875,
+          "route": "VBA AST",
+          "reason": "",
+          "speedup": 1.0
+        },
+        {
+          "name": "Thunk",
+          "median_us": 1864.2156246642126,
+          "min_us": 1838.9875003776967,
+          "max_us": 1954.3781236279751,
+          "route": "C thunk",
+          "reason": "",
+          "speedup": 0.826254004365448
+        },
+        {
+          "name": "Bytecode",
+          "median_us": 1520.13749902835,
+          "min_us": 1470.5968751513876,
+          "max_us": 1590.121872141025,
+          "route": "Array bytecode",
+          "reason": "",
+          "speedup": 1.0132738820428997
+        }
+      ]
+    },
+    {
+      "case": 21,
+      "name": "Caught error",
+      "phase": 1,
+      "phase_name": "Create + compile + first run",
+      "engines": [
+        {
+          "name": "VBA",
+          "median_us": 12459.17499181815,
+          "min_us": 12289.57501007245,
+          "max_us": 12990.8999952022,
+          "route": "VBA AST",
+          "reason": "",
+          "speedup": 1.0
+        },
+        {
+          "name": "Thunk",
+          "median_us": 14699.549996294074,
+          "min_us": 14329.37500067055,
+          "max_us": 15088.324988028024,
+          "route": "C thunk",
+          "reason": "",
+          "speedup": 0.8475888714252648
+        },
+        {
+          "name": "Bytecode",
+          "median_us": 6823.22499051225,
+          "min_us": 6642.662498052237,
+          "max_us": 6948.437498067499,
+          "route": "Array bytecode",
+          "reason": "",
+          "speedup": 1.825995040342761
+        }
+      ]
+    },
+    {
+      "case": 21,
+      "name": "Caught error",
+      "phase": 2,
+      "phase_name": "Warm run",
+      "engines": [
+        {
+          "name": "VBA",
+          "median_us": 10928.900010185325,
+          "min_us": 10295.9249925334,
+          "max_us": 12872.474995674576,
+          "route": "VBA AST",
+          "reason": "",
+          "speedup": 1.0
+        },
+        {
+          "name": "Thunk",
+          "median_us": 12660.1250085514,
+          "min_us": 12285.999982850624,
+          "max_us": 13556.949998019276,
+          "route": "C thunk",
+          "reason": "",
+          "speedup": 0.863253720070165
+        },
+        {
+          "name": "Bytecode",
+          "median_us": 4744.875011965638,
+          "min_us": 4602.162502123975,
+          "max_us": 4896.587488474325,
+          "route": "Array bytecode",
+          "reason": "",
+          "speedup": 2.3033061951315466
+        }
+      ]
+    }
+  ],
+  "ablation": [
+    {
+      "name": "Arithmetic",
+      "optimized_us": 11.280200169494481,
+      "unoptimized_us": 11.228442360788916,
+      "speedup": 0.9954116232045654
+    },
+    {
+      "name": "For loop",
+      "optimized_us": 5361.750008887612,
+      "unoptimized_us": 6133.537506684663,
+      "speedup": 1.1439432081909338
+    },
+    {
+      "name": "While + branches",
+      "optimized_us": 3442.7312493789937,
+      "unoptimized_us": 3876.4187556807874,
+      "speedup": 1.1259719318433652
+    },
+    {
+      "name": "Fibonacci",
+      "optimized_us": 3012.5812481856,
+      "unoptimized_us": 3014.2437535687377,
+      "speedup": 1.0005518541231506
+    },
+    {
+      "name": "Object properties",
+      "optimized_us": 43405.9000108391,
+      "unoptimized_us": 41121.5000785887,
+      "speedup": 0.9473712114786251
+    },
+    {
+      "name": "Materials ledger",
+      "optimized_us": 65.9195311527582,
+      "unoptimized_us": 61.751953126076764,
+      "speedup": 0.9367777962949445
+    }
+  ]
+}

@@ -318,3 +318,11 @@ engine.Run pid, ThisWorkbook.Sheets(1)
 [📚 Documentation](docs/Language%20reference.md) • [🐛 Report Bug](https://github.com/ECP-Solutions/ASF/issues) • [💡 Request Feature](https://github.com/ECP-Solutions/ASF/issues) • [⭐ Star on GitHub](https://github.com/ECP-Solutions/ASF)
 
 </div>
+
+## Experimental array bytecode branch
+
+The separate `experiment/garcia-bytecode` branch explores WS Garcia's backend
+proposal and compares it with the AST and native thunk engines. It is opt-in.
+Compact slot bytecode handles scalar programs; shared-scope bytecode adds
+closures, classes, modules and host integration without whole-program fallback.
+Complex operations use ASF semantic services, with script bodies executing bytecode. See [coverage, setup and benchmarks](Tools/bytecode/README.md).

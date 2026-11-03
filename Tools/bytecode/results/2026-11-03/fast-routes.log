@@ -1,0 +1,260 @@
+Array bytecode:
+Array bytecode:
+Array bytecode:
+VBA fallback:verbose/call-trace host semantics
+Array bytecode:
+Array bytecode:
+Array bytecode:
+Array bytecode:
+Array bytecode:
+Array bytecode:
+Array bytecode:
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:verbose/call-trace host semantics
+Array bytecode:
+Array bytecode:
+Array bytecode:
+Array bytecode:
+Array bytecode:
+Array bytecode:
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:verbose/call-trace host semantics
+Array bytecode:
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:verbose/call-trace host semantics
+Array bytecode:
+VBA fallback:expression: FuncLiteral
+VBA fallback:expression: FuncLiteral
+VBA fallback:expression: FuncLiteral
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:expression: VBAexpr
+VBA fallback:expression: VBAexpr
+VBA fallback:expression: VBAexpr
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:method requiring callback/writeback resolution: reduce
+VBA fallback:method requiring callback/writeback resolution: reduce
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:method requiring callback/writeback resolution: reduce
+VBA fallback:method requiring callback/writeback resolution: foreach
+VBA fallback:injected bindings
+VBA fallback:injected bindings
+VBA fallback:method requiring callback/writeback resolution: foreach
+VBA fallback:builtin/host call: foreach
+VBA fallback:builtin/host call: foreach
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:method requiring callback/writeback resolution: join
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:method requiring callback/writeback resolution: at
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:method requiring callback/writeback resolution: every
+VBA fallback:method requiring callback/writeback resolution: find
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:method requiring callback/writeback resolution: includes
+VBA fallback:method requiring callback/writeback resolution: of
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:method requiring callback/writeback resolution: some
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:verbose/call-trace host semantics
+Array bytecode:
+VBA fallback:verbose/call-trace host semantics
+Array bytecode:
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:method requiring callback/writeback resolution: at
+VBA fallback:method requiring callback/writeback resolution: at
+Array bytecode:
+Array bytecode:
+VBA fallback:method requiring callback/writeback resolution: charat
+VBA fallback:method requiring callback/writeback resolution: charcodeat
+VBA fallback:method requiring callback/writeback resolution: concat
+VBA fallback:method requiring callback/writeback resolution: endswith
+VBA fallback:method requiring callback/writeback resolution: fromcharcode
+VBA fallback:method requiring callback/writeback resolution: includes
+VBA fallback:method requiring callback/writeback resolution: indexof
+VBA fallback:method requiring callback/writeback resolution: lastindexof
+VBA fallback:method requiring callback/writeback resolution: localecompare
+VBA fallback:method requiring callback/writeback resolution: padend
+VBA fallback:method requiring callback/writeback resolution: repeat
+Array bytecode:
+VBA fallback:expression: FuncLiteral
+VBA fallback:method requiring callback/writeback resolution: slice
+VBA fallback:method requiring callback/writeback resolution: split
+VBA fallback:method requiring callback/writeback resolution: startswith
+VBA fallback:method requiring callback/writeback resolution: substring
+Array bytecode:
+Array bytecode:
+Array bytecode:
+Array bytecode:
+VBA fallback:method requiring callback/writeback resolution: replace
+VBA fallback:method requiring callback/writeback resolution: replace
+VBA fallback:method requiring callback/writeback resolution: replace
+VBA fallback:expression: FuncLiteral
+VBA fallback:method requiring callback/writeback resolution: replaceall
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:method requiring callback/writeback resolution: replace
+VBA fallback:method requiring callback/writeback resolution: replace
+VBA fallback:method requiring callback/writeback resolution: replace
+VBA fallback:method requiring callback/writeback resolution: replace
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:method requiring callback/writeback resolution: replaceall
+VBA fallback:method requiring callback/writeback resolution: replaceall
+VBA fallback:builtin/host call: regex
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:builtin/host call: regex
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:builtin/host call: regex
+VBA fallback:builtin/host call: regex
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:builtin/host call: regex
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:builtin/host call: regex
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:statement: ClassDecl
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:statement: ClassDecl
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:method requiring callback/writeback resolution: size
+Array bytecode:
+VBA fallback:method requiring callback/writeback resolution: haskey
+VBA fallback:method requiring callback/writeback resolution: haskey
+VBA fallback:method requiring callback/writeback resolution: has
+VBA fallback:method requiring callback/writeback resolution: isempty
+VBA fallback:method requiring callback/writeback resolution: isempty
+VBA fallback:method requiring callback/writeback resolution: get
+VBA fallback:method requiring callback/writeback resolution: get
+VBA fallback:method requiring callback/writeback resolution: get
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:method requiring callback/writeback resolution: set
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:method requiring callback/writeback resolution: remove
+VBA fallback:method requiring callback/writeback resolution: clear
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:method requiring callback/writeback resolution: foreach
+VBA fallback:method requiring callback/writeback resolution: foreach
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:method requiring callback/writeback resolution: some
+VBA fallback:method requiring callback/writeback resolution: some
+VBA fallback:method requiring callback/writeback resolution: every
+VBA fallback:method requiring callback/writeback resolution: every
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:method requiring callback/writeback resolution: foreach
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:statement: ClassDecl
+VBA fallback:verbose/call-trace host semantics
+Array bytecode:
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:verbose/call-trace host semantics
+VBA fallback:expression: SpreadElement
+VBA fallback:expression: SpreadElement
+Array bytecode:
+Array bytecode:
+Array bytecode:
+Array bytecode:
+Array bytecode:
+Array bytecode:
+Array bytecode:
+Array bytecode:
+VBA fallback:method requiring callback/writeback resolution: slice
+Array bytecode:
+:
+Array bytecode:
+VBA fallback:expression: SpreadElement
+Array bytecode:
+Array bytecode:
+Array bytecode:
+Array bytecode:
+Array bytecode:
+Array bytecode:
+VBA fallback:injected bindings
+VBA fallback:statement: Import
+VBA fallback:injected bindings
+VBA fallback:injected bindings
+VBA fallback:injected bindings
+VBA fallback:injected bindings
+VBA fallback:injected bindings
+VBA fallback:injected bindings
+VBA fallback:injected bindings
+VBA fallback:injected bindings
+VBA fallback:injected bindings
+VBA fallback:injected bindings
+VBA fallback:method requiring callback/writeback resolution: pow
+Array bytecode:
+Array bytecode:
+Array bytecode:
+VBA fallback:statement: ClassDecl
+VBA fallback:statement: ClassDecl
+VBA fallback:method requiring callback/writeback resolution: set
+VBA fallback:builtin/host call: regex
+VBA fallback:builtin/host call: regex
+VBA fallback:method requiring callback/writeback resolution: max
+VBA fallback:method requiring callback/writeback resolution: min
+VBA fallback:method requiring callback/writeback resolution: max
+Array bytecode:
+VBA fallback:opaque object argument
+VBA fallback:method requiring callback/writeback resolution: filter
+VBA fallback:opaque object argument
+Array bytecode:
