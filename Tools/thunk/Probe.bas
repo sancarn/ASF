@@ -3,6 +3,7 @@ Option Explicit
 Public NativeDefault As Boolean
 Public FastDefault As Boolean
 Private checks As Long
+Private alternateFast As Boolean
 
 Public Function ExistingSuite(ByVal native As Boolean) As String
     NativeDefault = native
@@ -123,7 +124,7 @@ Private Sub VariantCases()
         Set pure = New ASF: Set native = New ASF
         pure.AppAccess = True: native.AppAccess = True
         pure.verbose = True: native.verbose = True
-        native.NativeExecution = True
+        native.NativeExecution = Not alternateFast: native.FastExecution = alternateFast
         p = pure.Compile(CStr(expression)): n = native.Compile(CStr(expression))
         For i = 0 To UBound(inputs)
             If IsObject(a) Then Set a = Nothing
@@ -142,7 +143,8 @@ Private Sub ReentryCases()
     Dim baselineCalls As Long
     For native = 0 To 1
         Set engine = New ASF
-        engine.NativeExecution = CBool(native)
+        engine.NativeExecution = CBool(native) And Not alternateFast
+        engine.FastExecution = CBool(native) And alternateFast
         engine.AppAccess = True
         Set probe = New ThunkReentryProbe
         Set probe.engine = engine
@@ -160,6 +162,9 @@ Private Sub ReentryCases()
             Check CDbl(engine.OUTPUT_) = 7, "finalizer reentry result"
             Check probe.releases = repeat, "finalizer release count"
         Next repeat
+        idx = engine.Compile("let a=$1.Make();a=0;return $1.releases;")
+        engine.Run idx, probe
+        Check CDbl(engine.OUTPUT_) = 31, "finalizer timing before next statement"
         Set probe.engine = Nothing
         Set probe = Nothing: Set engine = Nothing
     Next native
@@ -179,11 +184,24 @@ End Function
 
 Public Function FastSuite() As String
     NativeDefault = False: FastDefault = True
-    FastTests.BytecodeRuns = 0: FastTests.FallbackRuns = 0: FastTests.NotRun = 0
+    FastTests.BytecodeRuns = 0: FastTests.FallbackRuns = 0: FastTests.NotRun = 0: FastTests.ScopeRuns = 0
     TestRunner.RunAllTests
     FastSuite = TestRunner.ThunkSuiteResult
     FastDefault = False
 End Function
 Public Function FastRoutes() As String
-    FastRoutes = FastTests.BytecodeRuns & "/" & FastTests.FallbackRuns & "/" & FastTests.NotRun
+    FastRoutes = FastTests.BytecodeRuns & "/" & FastTests.ScopeRuns & "/" & FastTests.FallbackRuns & "/" & FastTests.NotRun
+End Function
+
+Public Function FastParity() As String
+    On Error GoTo Failed
+    checks = 0: alternateFast = True
+    VariantCases
+    ReentryCases
+    FastParity = CStr(checks)
+    alternateFast = False
+    Exit Function
+Failed:
+    FastParity = "ERROR " & Err.Number & " " & Err.Description
+    alternateFast = False
 End Function

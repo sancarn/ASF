@@ -605,7 +605,7 @@ def library_modules(repo=ROOT):
     mods = []
     for path in sorted(glob.glob(os.path.join(repo, "src", "*.cls"))):
         name = os.path.splitext(os.path.basename(path))[0]
-        if name in VBA_EXPRESSIONS or name in ("ASF_Thunk", "ASF_ThunkProgram", "ASF_Bytecode", "ASF_FastVM"):
+        if name in VBA_EXPRESSIONS or name in ("ASF_Thunk", "ASF_ThunkProgram", "ASF_Bytecode", "ASF_FastVM", "ASF_ScopeVM"):
             continue
         if name in OVERRIDES:
             body = load(os.path.join(LO_DIR, "overrides", name + ".bas"))

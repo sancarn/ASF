@@ -17,6 +17,7 @@ Private width As Long, supported As Boolean, rejection As String
 Private foldCount As Long, fusionCount As Long
 Private positions() As Long, writable() As Boolean, argumentID() As Long
 Private optimised As Boolean
+Private scopeRoot As ASF_Map
 
 Friend Sub Prepare(ByVal globals As ASF_Globals, ByVal index As Long, ByVal optimize As Boolean)
     Dim compiler As New ASF_Bytecode, data As Variant
@@ -24,7 +25,15 @@ Friend Sub Prepare(ByVal globals As ASF_Globals, ByVal index As Long, ByVal opti
     supported = compiler.Build(globals, index, optimize)
     rejection = compiler.Reason
     If Not supported Then Exit Sub
-    data = compiler.Export
+    LoadCode compiler.Export
+End Sub
+Friend Sub PrepareNode(ByVal globals As ASF_Globals, ByVal node As ASF_Map, ByVal expression As Boolean)
+    Dim compiler As New ASF_Bytecode
+    Set scopeRoot = node
+    supported = compiler.BuildNode(globals, node, expression): rejection = compiler.Reason
+    If supported Then LoadCode compiler.Export
+End Sub
+Private Sub LoadCode(ByVal data As Variant)
     op = data(0): a = data(1): b = data(2): handlers = data(3)
     constants = data(4): names = data(5): entries = data(6): parameters = data(7)
     width = data(8): foldCount = data(9): fusionCount = data(10)
@@ -449,4 +458,8 @@ Private Function MethodName(ByVal id As Long) As String
         Case 7: MethodName = "item"
         Case 8: MethodName = "count"
     End Select
+End Function
+
+Friend Function ScopeCode() As Variant
+    ScopeCode = Array(op, a, b, constants, names, width, handlers)
 End Function

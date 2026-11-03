@@ -200,7 +200,8 @@ End Sub
 ' END WINDOWS NATIVE BACKEND
 
 ' BEGIN FAST BYTECODE BACKEND
-' Experimental whole-program bytecode selection. Unsupported programs run the AST backend.
+' Experimental bytecode execution: compact slots or shared-scope instructions.
+' Complex services re-enter bytecode for their script bodies; no AST replay.
 Public Property Let FastExecution(ByVal enabled As Boolean)
     VM_.FastExecution = enabled
 End Property
@@ -229,4 +230,25 @@ End Property
 Public Sub ClearFastCache()
     VM_.ClearFastCache
 End Sub
+' END FAST BYTECODE BACKEND
+
+' BEGIN FAST BYTECODE BACKEND
+Public Property Get FastScopeEntryCount() As Double
+    FastScopeEntryCount = VM_.FastScopeEntryCount
+End Property
+Public Property Get FastHostServiceCount() As Double
+    FastHostServiceCount = VM_.FastHostServiceCount
+End Property
+' END FAST BYTECODE BACKEND
+
+' BEGIN FAST BYTECODE BACKEND
+Public Property Get FastClosureReleaseCount() As Double
+    FastClosureReleaseCount = VM_.FastClosureReleaseCount
+End Property
+' END FAST BYTECODE BACKEND
+
+' BEGIN FAST BYTECODE BACKEND
+Public Property Get FastScopeProgramCount() As Long
+    FastScopeProgramCount = VM_.FastScopeProgramCount
+End Property
 ' END FAST BYTECODE BACKEND

@@ -19,6 +19,7 @@ Private globals As ASF_Globals, pending As Collection, functions As Collection
 Private currentHandler As Long, folded As Long, fused As Long
 Private rejection As String, optimise As Boolean
 Private scratchCount As Long
+Private scoped As Boolean
 
 Friend Function Build(ByVal state As ASF_Globals, ByVal index As Long, ByVal optimize As Boolean) As Boolean
     On Error GoTo Unsupported
@@ -109,9 +110,11 @@ Private Function NameID(ByVal name As String) As Long
     For i = 0 To nameUsed - 1
         If names(i) = name Then NameID = i: Exit Function
     Next i
+    If Not scoped Then
     If name = "Math" Or name = "this" Or name = "super" Then Reject "special binding: " & name
     If Left$(name, 2) = "__" Then Reject "reserved runtime binding: " & name
     If InStr(name, ".") > 0 Or InStr(name, "[") > 0 Then Reject "legacy path binding: " & name
+    End If
     If nameUsed > UBound(names) Then ReDim Preserve names(0 To nameUsed * 2 - 1)
     names(nameUsed) = name: NameID = nameUsed: nameUsed = nameUsed + 1
 End Function
@@ -142,6 +145,22 @@ Private Sub Expression(ByVal node As ASF_Map)
     Dim symbol As String, jump As Long, finish As Long, value As Variant, id As Long
     Dim left As ASF_Map, right As ASF_Map, callee As ASF_Map, args As Collection, arg As ASF_Map
     Dim keys As Collection, pair As Collection, spreadCount As Long
+    If scoped Then
+        Select Case CStr(node.GetValue("type"))
+            Case "Literal", "Variable", "Binary", "Unary", "Ternary"
+            Case "Call"
+                If EmitScopedCall(node) Then Exit Sub
+                If node.Exists("callee") Then
+                    Set callee = node.GetValue("callee")
+                    If callee.GetValue("type") = "Member" Then
+                        id = ArrayServiceID(CStr(callee.GetValue("prop")))
+                        If id > 0 Then Emit 75, Pool(node), id: Exit Sub
+                    End If
+                End If
+                Emit 67, Pool(node): Exit Sub
+            Case Else: Emit 67, Pool(node): Exit Sub
+        End Select
+    End If
     If optimise Then
         If Fold(node, value) Then Literal value: folded = folded + 1: Exit Sub
     End If
@@ -152,6 +171,7 @@ Private Sub Expression(ByVal node As ASF_Map)
             symbol = node.GetValue("op")
             Set left = node.GetValue("left"): Set right = node.GetValue("right")
             Expression left
+            If scoped Then Emit 72
             Select Case symbol
                 Case "&&", "||"
                     jump = Emit(IIf(symbol = "&&", 8, 9))
@@ -172,7 +192,9 @@ Private Sub Expression(ByVal node As ASF_Map)
                 Case Else: Reject "unary operator: " & symbol
             End Select
         Case "Ternary"
-            Expression node.GetValue("cond"): jump = Emit(8)
+            Expression node.GetValue("cond")
+            If scoped Then Emit 72
+            jump = Emit(8)
             Expression node.GetValue("trueExpr"): finish = Emit(7)
             a(jump) = used: Expression node.GetValue("falseExpr"): a(finish) = used
         Case "Array"
@@ -295,6 +317,10 @@ End Sub
 Private Sub IgnoredStatement(ByVal node As ASF_Map)
     If node Is Nothing Then Exit Sub
     Dim start As Long, i As Long
+    If scoped Then
+        Emit 68, Pool(node), 1
+        Exit Sub
+    End If
     If node.GetValue("type") <> "Assign" And node.GetValue("type") <> "ExprStmt" Then Reject "for initializer/step control statement"
     start = used
     Statement node, -1, -1
@@ -306,7 +332,18 @@ Private Sub Statement(ByVal node As ASF_Map, ByVal exitLoop As Long, ByVal nextL
     Dim start As Long, jump As Long, finish As Long, breakPC As Long, continuePC As Long, i As Long
     Dim conds As Collection, blocks As Collection, exits As Collection, item As Variant
     Dim pair As Collection, slot As Long, savedHandler As Long, tryStart As Long
+    If scoped Then
+        Select Case kind
+            Case "Block", "Assign", "ExprStmt", "Return", "If", "While", "Break", "Continue", "TryCatch", "Print"
+            Case "For"
+                If node.Exists("kind") Then
+                    If node.GetValue("kind") <> "classic" Then Emit 68, Pool(node): Exit Sub
+                End If
+            Case Else: Emit 68, Pool(node): Exit Sub
+        End Select
+    End If
     Select Case kind
+        Case "Block": CompileBlock node.GetValue("body"), -2, -2
         Case "Assign"
             Set left = node.GetValue("left"): Set right = node.GetValue("right")
             If optimise And left.GetValue("type") = "Variable" Then
@@ -332,6 +369,8 @@ Private Sub Statement(ByVal node As ASF_Map, ByVal exitLoop As Long, ByVal nextL
             Expression right
             If left.GetValue("type") = "Variable" Then
                 Emit 3, NameID(CStr(left.GetValue("name")))
+            ElseIf scoped Then
+                Emit 69, Pool(left)
             Else
                 CompileWrite left
             End If
@@ -342,10 +381,18 @@ Private Sub Statement(ByVal node As ASF_Map, ByVal exitLoop As Long, ByVal nextL
         Case "ExprStmt": Expression node.GetValue("expr"): Emit 4
         Case "Return": Expression node.GetValue("expr"): Emit 6
         Case "Break"
-            If exitLoop < 0 Then Reject "break outside loop"
+            If exitLoop = -2 Then Exit Sub
+            If exitLoop < 0 Then
+                If scoped Then Emit 71, 1: Exit Sub
+                Reject "break outside loop"
+            End If
             Emit 7, exitLoop
         Case "Continue"
-            If nextLoop < 0 Then Reject "continue outside loop"
+            If nextLoop = -2 Then Exit Sub
+            If nextLoop < 0 Then
+                If scoped Then Emit 71, 2: Exit Sub
+                Reject "continue outside loop"
+            End If
             Emit 7, nextLoop
         Case "If"
             Set exits = New Collection
@@ -373,14 +420,13 @@ Private Sub Statement(ByVal node As ASF_Map, ByVal exitLoop As Long, ByVal nextL
             End If
         Case "TryCatch"
             ' Reference try/catch consumes break/continue and ignores catch binding.
-            ' Reject those control transfers until their unusual behavior is lowered.
             savedHandler = currentHandler
             jump = Emit(7): breakPC = Emit(7): a(jump) = used
             currentHandler = breakPC
-            CompileBlock node.GetValue("try"), -1, -1
+            CompileBlock node.GetValue("try"), IIf(scoped, -2, -1), IIf(scoped, -2, -1)
             currentHandler = savedHandler
             finish = Emit(7): a(breakPC) = used
-            CompileBlock node.GetValue("catch"), -1, -1
+            CompileBlock node.GetValue("catch"), IIf(scoped, -2, -1), IIf(scoped, -2, -1)
             a(finish) = used
         Case "Switch"
             scratchCount = scratchCount + 1: slot = NameID("#switch" & scratchCount)
@@ -408,7 +454,12 @@ Private Sub Statement(ByVal node As ASF_Map, ByVal exitLoop As Long, ByVal nextL
             jump = Emit(7): breakPC = Emit(7): continuePC = Emit(7)
             a(jump) = used: start = used
             Set part = node.GetValue("cond")
+            savedHandler = currentHandler
+            If scoped And kind = "For" Then
+                If savedHandler >= 0 Then currentHandler = -savedHandler - 3 Else currentHandler = -2
+            End If
             If Not part Is Nothing Then Condition part, breakPC
+            currentHandler = savedHandler
             CompileBlock node.GetValue("body"), breakPC, continuePC
             a(continuePC) = used
             If kind = "For" Then IgnoredStatement node.GetValue("step")
@@ -476,5 +527,91 @@ Private Function BuiltinID(ByVal name As String) As Long
         Case "clone": BuiltinID = 3
         Case "isarray": BuiltinID = 4
         Case "isnumeric": BuiltinID = 5
+    End Select
+End Function
+
+' Scope-bearing code shares the reference frame objects with escaped closures,
+' classes and host evaluators. The program still executes compiled instructions;
+' semantic services re-enter this compiler for every child expression/body.
+Friend Function BuildNode(ByVal state As ASF_Globals, ByVal node As ASF_Map, ByVal expression As Boolean) As Boolean
+    On Error GoTo Unsupported
+    scoped = True: optimise = False: Set globals = state: currentHandler = -1
+    ReDim op(0 To 127): ReDim a(0 To 127): ReDim b(0 To 127): ReDim handlers(0 To 127)
+    ReDim constants(0 To 31): ReDim names(0 To 31)
+    ReDim entries(0 To 0): ReDim parameters(0 To 0)
+    If expression Then
+        ExpressionNode node
+        Emit 73
+    Else
+        Statement node, -1, -1
+        Emit 0
+    End If
+    ReDim Preserve op(0 To used - 1): ReDim Preserve a(0 To used - 1)
+    ReDim Preserve b(0 To used - 1): ReDim Preserve handlers(0 To used - 1)
+    ReDim Preserve names(0 To IIf(nameUsed = 0, 0, nameUsed - 1))
+    BuildNode = True
+    Exit Function
+Unsupported:
+    rejection = Err.Description: Err.Clear
+End Function
+Private Sub ExpressionNode(ByVal node As ASF_Map)
+    Expression node
+End Sub
+
+Private Function EmitScopedCall(ByVal node As ASF_Map) As Boolean
+    If node.Exists("name") Or Not node.Exists("callee") Then Exit Function
+    Dim callee As ASF_Map: Set callee = node.GetValue("callee")
+    Dim memberCall As Boolean
+    memberCall = (callee.GetValue("type") = "Member")
+    If memberCall Then
+        Dim receiver As ASF_Map: Set receiver = callee.GetValue("base")
+        If receiver.GetValue("type") <> "Variable" Then Exit Function
+    ElseIf callee.GetValue("type") <> "Variable" Then
+        Exit Function
+    End If
+    If Not memberCall Then
+    Select Case LCase$(CStr(callee.GetValue("name")))
+        Case "range", "flatten", "clone", "isarray", "isnumeric", "foreach", "regex", "cwd", "scwd": Exit Function
+    End Select
+    End If
+    Dim args As Collection: Set args = node.GetValue("args")
+    Dim arg As ASF_Map
+    For Each arg In args
+        If Not arg Is Nothing Then
+            If arg.GetValue("type") = "SpreadElement" Then Exit Function
+        End If
+    Next arg
+    For Each arg In args: Expression arg: Next arg
+    If memberCall Then
+        Emit 76, Pool(Array(node, ArrayServiceID(CStr(callee.GetValue("prop"))))), args.Count
+    Else
+        Emit 74, Pool(node), args.Count
+    End If
+    EmitScopedCall = True
+End Function
+
+Private Function ArrayServiceID(ByVal name As String) As Long
+    Select Case LCase$(name)
+        Case "map": ArrayServiceID = 1
+        Case "filter": ArrayServiceID = 2
+        Case "reduce": ArrayServiceID = 3
+        Case "slice": ArrayServiceID = 4
+        Case "push": ArrayServiceID = 5
+        Case "pop": ArrayServiceID = 6
+        Case "foreach": ArrayServiceID = 7
+        Case "unique": ArrayServiceID = 8
+        Case "concat": ArrayServiceID = 9
+        Case "shift": ArrayServiceID = 10
+        Case "splice": ArrayServiceID = 11
+        Case "at": ArrayServiceID = 12
+        Case "copywithin": ArrayServiceID = 13
+        Case "entries": ArrayServiceID = 14
+        Case "every": ArrayServiceID = 15
+        Case "from": ArrayServiceID = 16
+        Case "of": ArrayServiceID = 17
+        Case "reverse": ArrayServiceID = 18
+        Case "toreversed": ArrayServiceID = 19
+        Case "some": ArrayServiceID = 20
+        Case "with": ArrayServiceID = 21
     End Select
 End Function

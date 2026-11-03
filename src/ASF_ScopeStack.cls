@@ -190,3 +190,19 @@ Private Sub vAssignment(ByRef var As Variant, ByRef vValue As Variant)
         var = vValue
     End If
 End Sub
+
+' BEGIN FAST BYTECODE BACKEND
+Friend Sub ResolveCell(ByVal name As String, ByRef owner As ASF_Map, ByRef position As Long, ByVal create As Boolean)
+    Dim i As Long, frame As ASF_Map
+    Set owner = Nothing: position = -1
+    For i = pFrames.Count To 1 Step -1
+        Set frame = pFrames(i): position = frame.CellPosition(name)
+        If position >= 0 Then Set owner = frame: Exit Sub
+    Next i
+    If create Then
+        Set owner = pFrames(pFrames.Count)
+        owner.SetValue name, Empty
+        position = owner.CellPosition(name)
+    End If
+End Sub
+' END FAST BYTECODE BACKEND

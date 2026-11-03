@@ -6,20 +6,30 @@ All notable changes for ASF. This file combines the release notes from the proje
 
 ### 2026-11-03: Garcia bytecode experiment
 
-- **WIP**: opt-in `FastExecution` array bytecode backend with numeric variable
-  bindings, explicit named-call frames, folding/fusion, map read caches, arrays,
-  object reads/writes, iteration, switch, rest/spread/destructuring and try/catch.
-  Supported COM/builtin services bridge to VBA. This is an incomplete five-phase
-  attempt: closures, classes, modules and scope-sensitive host features retain
-  whole-program fallback, with public routing/rejection diagnostics.
-- **Installation change**: this branch requires `ASF_Bytecode.cls` and
-  `ASF_FastVM.cls` even when FastExecution is off. Existing Run/Compile APIs and
-  default AST behavior are retained. Deep recursion in opt-in bytecode mode uses
-  explicit frames and can outlast the reference interpreter's VBA stack limit.
+- **WIP**: opt-in `FastExecution` backend implements feature coverage across the
+  five phases of WS Garcia's proposal ([PR #2](https://github.com/sancarn/ASF/pull/2)).
+  Compact slot/array bytecode, explicit named-call frames, folding/fusion and
+  guarded map caches are joined by shared-scope bytecode for closures, callbacks,
+  classes/inheritance, modules, COM prototypes and host expressions. Direct
+  closure and bound-method calls use explicit return frames; complex semantic
+  services re-enter bytecode for script bodies. Whole-program AST fallback is
+  removed. Scope-bearing try/catch uses per-instruction handler targets.
+- **WIP**: isolated, non-escaping closure/bound-method cycles are released after
+  scalar-result runs. Escaped or host-visible values retain their environments.
+  Runtime scopes, host reentry, COM default properties, finalizer timing and the
+  reference closure error-frame behavior are preserved. New counters expose
+  scope entries, semantic services, released cycles and cached scope programs.
+- **Installation change**: import `ASF_Bytecode.cls`, `ASF_FastVM.cls` and
+  `ASF_ScopeVM.cls` with the existing source classes, including when FastExecution
+  is off. Existing Run/Compile signatures and default AST behavior are retained.
+  Opt-in direct-call recursion can exceed the reference VBA stack limit. The
+  earlier experimental `VBA fallback` route becomes `Scope bytecode`.
 - **DEV**: three-engine Excel benchmarks for 22 workloads, cold and warm phases,
-  a combined-optimization ablation, differential tests and fallback accounting.
-  The existing LibreOffice AST build excludes the unported experimental backend.
-  See `Tools/bytecode/README.md` for exact coverage and reproducible measurements.
+  a combined-optimization ablation, result/type/log/reentry parity tests and
+  actual-route assertions. The existing LibreOffice AST build excludes the
+  unported experimental backends. Windows Excel x64 is the validated host;
+  32-bit Office and LibreOffice runtime execution are not claimed.
+  See `Tools/bytecode/README.md` for architecture, validation and measurements.
 
 ### 2026-11-03: native/VBA benchmark branch
 

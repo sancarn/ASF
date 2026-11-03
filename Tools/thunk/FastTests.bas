@@ -1,6 +1,6 @@
 Attribute VB_Name = "FastTests"
 Option Explicit
-Public BytecodeRuns As Long, FallbackRuns As Long, NotRun As Long
+Public BytecodeRuns As Long, ScopeRuns As Long, FallbackRuns As Long, NotRun As Long
 Private checks As Long
 Private currentSource As String
 Public Sub RecordRoute(ByVal engine As ASF_VM)
@@ -11,6 +11,7 @@ Public Sub RecordRoute(ByVal engine As ASF_VM)
     Close #log
     Select Case engine.LastExecutionBackend
         Case "Array bytecode": BytecodeRuns = BytecodeRuns + 1
+        Case "Scope bytecode": ScopeRuns = ScopeRuns + 1
         Case "VBA fallback": FallbackRuns = FallbackRuns + 1
         Case Else: NotRun = NotRun + 1
     End Select
@@ -27,7 +28,9 @@ Private Sub Compare(ByVal source As String, Optional ByVal bytecode As Boolean =
         If Not IsNull(pure.OUTPUT_) Then
             If CStr(pure.OUTPUT_) <> CStr(fast.OUTPUT_) Then Err.Raise 5, , "value mismatch: " & source & " expected " & CStr(pure.OUTPUT_) & " got " & CStr(fast.OUTPUT_)
         End If
-        If bytecode <> (fast.LastExecutionBackend = "Array bytecode") Then Err.Raise 5, , "route mismatch: " & source & " " & fast.FastFallbackReason
+        If (bytecode And fast.LastExecutionBackend <> "Array bytecode") Or (Not bytecode And fast.LastExecutionBackend <> "Scope bytecode") Then Err.Raise 5, , "route mismatch: " & source & " " & fast.FastFallbackReason
+        If Not bytecode And fast.FastScopeEntryCount = 0 Then Err.Raise 5, , "scope code was not entered"
+        If fast.FastFallbackCount <> 0 Then Err.Raise 5, , "whole-program fallback"
         fast.FastOptimizations = (i = 2)
     Next i
 End Sub
@@ -65,7 +68,7 @@ Public Function Run() As String
     Compare "return [1,2,3].length;"
     Compare "return isArray([1])+isNumeric('2');"
     Compare "return flatten([[1,2],[3,4]]).length;"
-    ' Phases 2-5: prove rejection happens before execution and preserve reference behavior.
+    ' Phases 2-5: assert scope bytecode entry as well as reference behavior.
     Compare "let x=1;let f=fun(){x+=1;return x;};return f();", False
     Compare "fun f(...r){return r.length;};return f(1,2,3);"
     Compare "let a=[1,2];return [...a,3].length;"
@@ -111,6 +114,21 @@ Public Function Run() As String
     Compare "return empty;"
     Compare "return -3<<2;"
     Compare "return null+'x';"
+    Compare "fun counter(){let n=0;return fun(){n+=1;return n;};};let f=counter();return f()+f();", False
+    Compare "let a=[1,2,3];return a.map(fun(x){return x*2;}).reduce(fun(s,x){return s+x;},0);", False
+    Compare "let x=0;let f=fun(){return x;};x=7;return f();", False
+    Compare "let x=0;let f=fun(){x+=1;return x;};let g=fun(){return x;};f();return g();", False
+    Compare "class P{constructor(x){this.x=x;}add(n){this.x+=n;return this.x;}};let p=new P(4);return p.add(3);", False
+    Compare "let f=fun(n){if(n<=0){return 0;};return 1+f(n-1);};return f(20);", False
+    Compare "let f=fun(n){if(n==0){return 1/0;};return f(n-1)??7;};return f(3);", False
+    Compare "class P{constructor(x){this.x=x;}};let p=new P(4);return p.x;", False
+    Compare "let f=fun(){let x=0;try{let a=[1,2];x=1/0;}catch(e){x=7;};return x;};return f();", False
+    Compare "let f=fun(){try{for(let i=0;1/0;i+=1){break;};}catch(e){return 7;};return 3;};return f();", False
+    Compare "let f=fun(){let x=0;try{break;x=7;}catch(e){x=9;};return x;};return f();", False
+    Compare "class A{constructor(x){this.x=x;}f(){return this.x;}};class B extends A{constructor(x){super(x);}g(){return this.f()+2;}};let b=new B(5);return b.g();", False
+    Compare "let x=2;let f=fun(){x+=3;return @(x*2);};return f()+x;", False
+    Compare "let n=0;fun arg(){n+=1;return n;};let f=fun(x){return x;};return f(arg())*10+n;", False
+    Compare "let f=fun(n){if(n==0){return 1/0;};f(0);return n;};return f(7);", False
     ExtraChecks
     Run = CStr(checks)
     Exit Function
@@ -119,6 +137,49 @@ Failed:
 End Function
 
 Private Sub ExtraChecks()
+    Dim scoped As New ASF, pScoped As Long, escaped As Variant
+    scoped.FastExecution = True: scoped.AppAccess = True
+    pScoped = scoped.Compile("let f=fun(n){if(n==0){return 0;};return 1+f(n-1);};return f(1000);")
+    scoped.Run pScoped
+    If scoped.OUTPUT_ <> 1000 Or scoped.FastScopeEntryCount < 1000 Then Err.Raise 5, , "dynamic closure trampoline growth"
+    If scoped.FastClosureReleaseCount = 0 Then Err.Raise 5, , "closure arena was not released"
+    checks = checks + 1
+    pScoped = scoped.Compile("class P{f(n){if(n==0){return 0;};return 1+this.f(n-1);}};let p=new P();return p.f(500);")
+    scoped.Run pScoped
+    If scoped.OUTPUT_ <> 500 Then Err.Raise 5, , "bound-method trampoline growth"
+    checks = checks + 1
+    pScoped = scoped.Compile("fun counter(){let x=0;return fun(){x+=1;return x;};};return counter();")
+    Set escaped = scoped.Run(pScoped)
+    scoped.InjectVariable "escaped", escaped
+    pScoped = scoped.Compile("return escaped()+escaped();")
+    scoped.Run pScoped
+    If scoped.OUTPUT_ <> 3 Then Err.Raise 5, , "escaped closure lifetime"
+    scoped.Run pScoped
+    If scoped.OUTPUT_ <> 7 Then Err.Raise 5, , "escaped closure shared state"
+    checks = checks + 2
+    Dim warm As New ASF, cacheSize As Long, repeatRun As Long, warmID As Long
+    warm.FastExecution = True
+    warmID = warm.Compile("class P{constructor(n){this.n=n;}get(){return this.n;}};let p=new P(7);let a=[1,2,3].map(fun(x){return x+1;});return p.get()+a.length;")
+    warm.Run warmID: cacheSize = warm.FastScopeProgramCount
+    For repeatRun = 1 To 50: warm.Run warmID: Next repeatRun
+    If warm.OUTPUT_ <> 10 Or warm.FastScopeProgramCount <> cacheSize Then Err.Raise 5, , "scope cache retains transient values"
+    checks = checks + 1
+    Dim modules As New ASF, moduleID As Long, prototypeID As Long, entryCount As Double
+    modules.FastExecution = True: modules.WorkingDir = ThisWorkbook.Path
+    moduleID = modules.Compile("import Calculator from './calculator.vas';let c=Calculator();return c.add(2,3);")
+    For repeatRun = 1 To 3
+        entryCount = modules.FastScopeEntryCount: modules.Run moduleID
+        If modules.OUTPUT_ <> 5 Or modules.FastScopeEntryCount <= entryCount Then Err.Raise 5, , "module exported closure bytecode"
+    Next repeatRun
+    checks = checks + 3
+    modules.AppAccess = True: modules.OverrideCollMethods = True
+    prototypeID = modules.Compile("prototype.COM.Worksheet Name(){return 'PATCHED';};return $1.Name;")
+    modules.Run prototypeID, ThisWorkbook.Sheets(2)
+    If modules.OUTPUT_ <> "PATCHED" Then Err.Raise 5, , "prototype registration"
+    prototypeID = modules.Compile("return $1.Name;")
+    modules.Run prototypeID, ThisWorkbook.Sheets(2)
+    If modules.OUTPUT_ <> "PATCHED" Or modules.LastExecutionBackend <> "Scope bytecode" Then Err.Raise 5, , "persistent prototype dispatch"
+    checks = checks + 2
     Dim engine As New ASF, pure As New ASF, idx As Long, old As Long, items As New Collection, arg As Variant
     engine.FastExecution = True
     old = engine.Compile("return 7;"): engine.Run old
@@ -134,7 +195,7 @@ Private Sub ExtraChecks()
     engine.AppAccess = True
     idx = engine.Compile("$1.Add(99);let f=fun(){return 1;};return $1.Count;")
     engine.Run idx, items
-    If items.Count <> 1 Or engine.LastExecutionBackend <> "VBA fallback" Then Err.Raise 5, , "fallback repeated side effect"
+    If items.Count <> 1 Or engine.LastExecutionBackend <> "Scope bytecode" Then Err.Raise 5, , "fallback repeated side effect"
     checks = checks + 1
     idx = engine.Compile("return $1.Count+$1.Item(1);"): engine.Run idx, items
     If engine.OUTPUT_ <> 100 Or engine.LastExecutionBackend <> "Array bytecode" Then Err.Raise 5, , "COM boundary"
@@ -153,6 +214,6 @@ Private Sub ExtraChecks()
     checks = checks + 1
     engine.FastExecution = True: engine.InjectVariable "x", 5
     idx = engine.Compile("return x;"): engine.Run idx
-    If engine.OUTPUT_ <> 5 Or engine.LastExecutionBackend <> "VBA fallback" Then Err.Raise 5, , "injected binding fallback"
+    If engine.OUTPUT_ <> 5 Or engine.LastExecutionBackend <> "Scope bytecode" Then Err.Raise 5, , "injected binding fallback"
     checks = checks + 1
 End Sub

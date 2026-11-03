@@ -67,6 +67,9 @@ def worker(folder, smoke, baseline=False, benchmark=False, garcia=False):
             print('Regression: '+str(regression), flush=True)
             if str(regression).startswith('ERROR'): raise RuntimeError(regression)
             result['regression_checks'] = int(regression)
+            result['fast_parity'] = str(app.Run('ThunkProbe.FastParity'))
+            print('Fast variants/reentry: '+result['fast_parity'],flush=True)
+            if result['fast_parity'].startswith('ERROR'): raise RuntimeError(result['fast_parity'])
             for native in (False, True):
                 label = 'native' if native else 'vba'
                 print('Running '+label+' suite', flush=True)
@@ -144,7 +147,7 @@ def worker(folder, smoke, baseline=False, benchmark=False, garcia=False):
 def prepare(folder, baseline=False, benchmark=False, garcia=False):
     for path in (ROOT/'src').glob('*.cls'):
         if baseline:
-            if path.stem in ('ASF_Thunk', 'ASF_ThunkProgram', 'ASF_Bytecode', 'ASF_FastVM'): continue
+            if path.stem in ('ASF_Thunk', 'ASF_ThunkProgram', 'ASF_Bytecode', 'ASF_FastVM', 'ASF_ScopeVM'): continue
             source = subprocess.check_output(['git','show','527f172:src/'+path.name],cwd=ROOT).decode('cp1252').replace('\r\n','\n')
             # Necessary Excel compilation repair only, with no execution change.
             source = source.replace('                               stmts As Collection, evaluatedArgs As Collection, ByVal hasThis As Boolean',
@@ -225,7 +228,8 @@ def supervise(output, smoke=False, baseline=False, benchmark=False, garcia=False
                     winreg.SetValueEx(key,name,0,winreg.REG_DWORD,value)
             write(output/'settings-before.json',json.dumps(saved,indent=2))
             process = subprocess.Popen([sys.executable,str(Path(__file__)),'--worker',str(folder)]+(['--smoke'] if smoke else [])+(['--baseline'] if baseline else [])+(['--benchmark'] if benchmark else [])+(['--garcia'] if garcia else []))
-            deadline = time.monotonic() + 240
+            timeout_seconds = 480 if garcia else 240
+            deadline = time.monotonic() + timeout_seconds
             while process.poll() is None:
                 if (folder/'pid').exists(): office_pid = int((folder/'pid').read_text())
                 if office_pid and office_pid not in original_pids:
@@ -253,7 +257,7 @@ def supervise(output, smoke=False, baseline=False, benchmark=False, garcia=False
                     print(diagnostic.stdout, diagnostic.stderr, flush=True)
                     write(output/'compile-error.txt',diagnostic.stdout+diagnostic.stderr)
                     raise RuntimeError('Office dialog: '+str(dialogs))
-                if time.monotonic() > deadline: raise TimeoutError('Excel test exceeded 240 seconds')
+                if time.monotonic() > deadline: raise TimeoutError(f'Excel test exceeded {timeout_seconds} seconds')
                 time.sleep(.05)
             result = json.loads((folder/'result.json').read_text()) if (folder/'result.json').exists() else {'status':'failed'}
             result.update(dialogs=dialogs, elapsed_seconds=time.time()-started,

@@ -123,6 +123,14 @@ Private Sub Validate(ByVal engine As ASF, ByVal backend As Long)
     Else
         If engine.NativeEntryCount <> 0 Then Err.Raise 5, "ThunkBenchmark", "VBA route entered native code"
     End If
+    If backend >= 2 Then
+        If engine.FastFallbackCount <> 0 Then Err.Raise 5, , "Bytecode benchmark used whole-program fallback"
+        If engine.LastExecutionBackend = "Scope bytecode" Then
+            If engine.FastScopeEntryCount = 0 Then Err.Raise 5, , "Scope bytecode not entered"
+        ElseIf engine.LastExecutionBackend <> "Array bytecode" Then
+            Err.Raise 5, , "Unexpected bytecode route"
+        End If
+    End If
 End Sub
 
 ' 0: new engine + configure backend + compile AST (no Run in the timer)

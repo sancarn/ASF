@@ -199,3 +199,15 @@ Friend Function FastGetValue(ByVal key As String, ByRef position As Long) As Var
         Set FastGetValue = Nothing
     End If
 End Function
+
+' Bytecode cells are positions in the frame's existing Variant storage. Sharing
+' a frame therefore shares writes without copying captures into a new dictionary.
+Friend Function CellPosition(ByVal name As String) As Long
+    CellPosition = GetKeyIndex(name)
+End Function
+Friend Function CellValue(ByVal position As Long) As Variant
+    vAssignment CellValue, pItems.Storage(position)
+End Function
+Friend Sub CellStore(ByVal position As Long, ByRef value As Variant)
+    vAssignment pItems.Storage(position), value
+End Sub

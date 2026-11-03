@@ -322,6 +322,7 @@ engine.Run pid, ThisWorkbook.Sheets(1)
 ## Experimental array bytecode branch
 
 The separate `experiment/garcia-bytecode` branch explores WS Garcia's backend
-proposal and compares it with the AST and native thunk engines. It is opt-in and
-incomplete; closures, classes and other unsupported programs use whole-program
-fallback. See [coverage, setup and benchmarks](Tools/bytecode/README.md).
+proposal and compares it with the AST and native thunk engines. It is opt-in.
+Compact slot bytecode handles scalar programs; shared-scope bytecode adds
+closures, classes, modules and host integration without whole-program fallback.
+Complex operations use ASF semantic services, with script bodies executing bytecode. See [coverage, setup and benchmarks](Tools/bytecode/README.md).

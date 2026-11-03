@@ -33,6 +33,8 @@ Private FAST_OPTIMIZE_ As Boolean
 Private fastPrograms As Collection
 Private lastBackend As String, fastReason As String
 Private fastRuns As Long, fallbackRuns As Long
+Private scopePrograms As Collection, scopeDepth As Long, scopeEntries As Double, scopeServices As Double
+Private closureRuns As Collection, releasedClosures As Double
 ' END FAST BYTECODE BACKEND
 ' BEGIN WINDOWS NATIVE BACKEND
 Private NATIVE_ As Boolean
@@ -46,7 +48,7 @@ Public Property Set Globals(aGlobals As ASF_Globals)
     If Not GLOBALS_ Is aGlobals Then Set nativeBackend = Nothing
 ' END WINDOWS NATIVE BACKEND
 ' BEGIN FAST BYTECODE BACKEND
-    If Not GLOBALS_ Is aGlobals Then Set fastPrograms = Nothing
+    If Not GLOBALS_ Is aGlobals Then ClearFastCache
 ' END FAST BYTECODE BACKEND
     Set GLOBALS_ = aGlobals
 End Property
@@ -438,6 +440,9 @@ End Property
 Private Function MakeNode(nodeType As String) As ASF_Map
     Dim m As New ASF_Map
     m.Add "type", nodeType
+' BEGIN FAST BYTECODE BACKEND
+    If scopeDepth > 0 Then m.SetValue "__vmTransient", True
+' END FAST BYTECODE BACKEND
     Set MakeNode = m
 End Function
 
@@ -448,10 +453,28 @@ Public Sub RunProgramByIndex(idx As Long, Optional params As Variant = Empty)
     If NATIVE_ Then lastBackend = "C thunk"
     If FAST_ Then
         If TryFastProgram(idx, params) Then Exit Sub
-        fallbackRuns = fallbackRuns + 1
-        lastBackend = "VBA fallback"
+        Dim savedDepth As Long: savedDepth = scopeDepth
+        scopeDepth = scopeDepth + 1
+        Dim runState As ASF_Map: Set runState = BeginClosureRun(params)
+        On Error GoTo ScopedFailure
+        RunScopedProgram idx, params
+        FinishClosureRun runState
+        scopeDepth = savedDepth
+        fastReason = vbNullString: lastBackend = "Scope bytecode": fastRuns = fastRuns + 1
+        Exit Sub
+ScopedFailure:
+        Dim code As Long, source As String, description As String
+        code = Err.Number: source = Err.Source: description = Err.Description
+        PreserveClosures
+        FinishClosureRun runState
+        scopeDepth = savedDepth
+        On Error GoTo 0
+        Err.Raise code, source, description
     End If
 ' END FAST BYTECODE BACKEND
+    RunScopedProgram idx, params
+End Sub
+Private Sub RunScopedProgram(ByVal idx As Long, ByVal params As Variant)
     Dim p As Variant: p = GLOBALS_.gPrograms(idx)
     Dim progName As String: progName = p(0)
     Dim stmts As Collection: Set stmts = p(1)
@@ -459,6 +482,14 @@ Public Sub RunProgramByIndex(idx As Long, Optional params As Variant = Empty)
 '    Dim optionBase As Long: optionBase = IIf(UBound(p) >= 3, p(3), 1)
     Dim progScope As ASF_ScopeStack: Set progScope = New ASF_ScopeStack
     progScope.LoadRaw rawScope
+' BEGIN FAST BYTECODE BACKEND
+    If scopeDepth > 0 Then
+        Dim rawFrame As ASF_Map
+        For Each rawFrame In rawScope
+            If rawFrame.Count > 0 Then PreserveClosures
+        Next rawFrame
+    End If
+' END FAST BYTECODE BACKEND
 '    progScope.SetValue "__option_base", optionBase
     progScope.SetValue "__option_base", 1 'Enforce option base=1
     Set MathObj = New Collection
@@ -500,7 +531,15 @@ Public Sub RunProgramByIndex(idx As Long, Optional params As Variant = Empty)
     Dim i As Long
     For i = 1 To stmts.Count
         Dim ctrl As String
+' BEGIN FAST BYTECODE BACKEND
+        If scopeDepth > 0 And FAST_ Then
+            ctrl = RunScopeBlock(stmts, progScope): i = stmts.Count
+        Else
+' END FAST BYTECODE BACKEND
         ctrl = ExecuteStmtNode(stmts(i), progScope)
+' BEGIN FAST BYTECODE BACKEND
+        End If
+' END FAST BYTECODE BACKEND
         If ctrl = "RETURN" Then
             ' Trace: Push call
             PushCallTrace progName, emptyColl
@@ -518,6 +557,13 @@ End Sub
 Private Function ExecuteStmtNode(node As ASF_Map, progScope As ASF_ScopeStack, Optional ByVal hostOnly As Boolean = False) As String
     ' a dispatcher with few locals: VBA sets up and clears every local of a procedure on each call
     On Error GoTo ErrHandler
+' BEGIN FAST BYTECODE BACKEND
+    If scopeDepth > 0 And FAST_ And Not hostOnly Then
+        Dim unused As Variant
+        ExecuteStmtNode = RunScopeCode(node, progScope, False, unused)
+        Exit Function
+    End If
+' END FAST BYTECODE BACKEND
 ' BEGIN WINDOWS NATIVE BACKEND
     If NATIVE_ And Not hostOnly Then
         ExecuteStmtNode = ExecuteNativeStatement(node, progScope)
@@ -1362,6 +1408,14 @@ End Function
 Private Function EvalExprNode(node As ASF_Map, progScope As ASF_ScopeStack, Optional ByVal hostOnly As Boolean = False) As Variant
     ' a dispatcher with few locals: VBA sets up and clears every local of a procedure on each call
     If node Is Nothing Then EvalExprNode = Empty: Exit Function
+' BEGIN FAST BYTECODE BACKEND
+    If scopeDepth > 0 And FAST_ And Not hostOnly Then
+        Dim scopedValue As Variant
+        RunScopeCode node, progScope, True, scopedValue
+        vAssignment EvalExprNode, scopedValue
+        Exit Function
+    End If
+' END FAST BYTECODE BACKEND
 ' BEGIN WINDOWS NATIVE BACKEND
     If NATIVE_ And Not hostOnly Then
         vAssignment EvalExprNode, EvalNativeExpression(node, progScope)
@@ -1615,7 +1669,7 @@ exitfun:
     vAssignment EvalSuperCall, tmpResult
 End Function
 
-Private Function EvalCall(node As ASF_Map, progScope As ASF_ScopeStack) As Variant
+Private Function EvalCall(node As ASF_Map, progScope As ASF_ScopeStack, Optional ByVal fastMethodID As Long = 0, Optional ByVal suppliedArgs As Collection) As Variant
     Dim tmpResult As Variant
     Dim funcIdx As Long
     Dim tmpMapObj As ASF_Map
@@ -1655,6 +1709,7 @@ Private Function EvalCall(node As ASF_Map, progScope As ASF_ScopeStack) As Varia
     Dim spreadVal As Variant
     Dim sci As Long
 
+    If suppliedArgs Is Nothing Then
     For k = 1 To argsColl.Count
         Set argNode = argsColl(k)
     
@@ -1683,6 +1738,9 @@ Private Function EvalCall(node As ASF_Map, progScope As ASF_ScopeStack) As Varia
             evaluated.Add EvalExprNode(argNode, progScope)
         End If
     Next k
+    Else
+        Set evaluated = suppliedArgs
+    End If
     
     If Not hasCalleeExpr Then
         If node.Exists("callee") Then
@@ -1697,7 +1755,7 @@ Private Function EvalCall(node As ASF_Map, progScope As ASF_ScopeStack) As Varia
             Dim propN As String
             Dim baseValLocal As Variant
             Dim origBaseVal As Variant
-            If EvalMethodCall(calleeExpr, evaluated, progScope, propN, baseValLocal, origBaseVal, tmpResult) Then GoTo exitfun
+            If EvalMethodCall(calleeExpr, evaluated, progScope, propN, baseValLocal, origBaseVal, tmpResult, fastMethodID) Then GoTo exitfun
         End If
     End If
     namedFunctions:
@@ -2091,7 +2149,7 @@ exitfun:
     EvalNamedBuiltin = True
 End Function
 
-Private Function EvalMethodCall(calleeExpr As ASF_Map, evaluated As Collection, progScope As ASF_ScopeStack, ByRef propN As String, ByRef baseValLocal As Variant, ByRef origBaseVal As Variant, ByRef tmpResult As Variant) As Boolean
+Private Function EvalMethodCall(calleeExpr As ASF_Map, evaluated As Collection, progScope As ASF_ScopeStack, ByRef propN As String, ByRef baseValLocal As Variant, ByRef origBaseVal As Variant, ByRef tmpResult As Variant, Optional ByVal fastMethodID As Long = 0) As Boolean
 
     propN = LCase$(CStr(calleeExpr.GetValue("prop")))
 
@@ -2118,6 +2176,12 @@ Private Function EvalMethodCall(calleeExpr As ASF_Map, evaluated As Collection, 
     End If
     Dim baseType As String: baseType = typeName(baseValLocal)
     If IsArray(baseValLocal) Then
+' BEGIN FAST BYTECODE BACKEND
+        If fastMethodID > 0 Then
+            EvalMethodCall = FastArrayMethod(calleeExpr, evaluated, progScope, propN, baseValLocal, origBaseVal, tmpResult, fastMethodID)
+            Exit Function
+        End If
+' END FAST BYTECODE BACKEND
         EvalMethodCall = ArrayMethod(calleeExpr, evaluated, progScope, propN, baseValLocal, origBaseVal, tmpResult)
     ElseIf baseType = "ASF_RegexEngine" Then
         EvalMethodCall = RegexMethod(calleeExpr, evaluated, progScope, propN, baseValLocal, origBaseVal, tmpResult)
@@ -4916,7 +4980,16 @@ Private Function CallFuncByIndex_AST(funcIdx As Long, args As Collection, Option
     retVal = Empty
     On Error GoTo FuncError
     For i = 1 To stmts.Count
-        Dim ctrl As String: ctrl = ExecuteStmtNode(stmts(i), callScope)
+        Dim ctrl As String
+' BEGIN FAST BYTECODE BACKEND
+        If scopeDepth > 0 And FAST_ Then
+            ctrl = RunScopeBlock(stmts, callScope): i = stmts.Count
+        Else
+' END FAST BYTECODE BACKEND
+        ctrl = ExecuteStmtNode(stmts(i), callScope)
+' BEGIN FAST BYTECODE BACKEND
+        End If
+' END FAST BYTECODE BACKEND
         If ctrl = "RETURN" Then
             vAssignment retVal, callScope.GetValue("__return")
             ' Trace: Pop call with return value
@@ -5466,7 +5539,15 @@ Private Function InvokeClosure(env As ASF_ScopeStack, ByVal pa As Variant, ByVal
     retVal = Empty
     
     For stmtIdx = 1 To stmts.Count
+' BEGIN FAST BYTECODE BACKEND
+        If scopeDepth > 0 And FAST_ Then
+            ctrl = RunScopeBlock(stmts, env): stmtIdx = stmts.Count
+        Else
+' END FAST BYTECODE BACKEND
         ctrl = ExecuteStmtNode(stmts(stmtIdx), env)
+' BEGIN FAST BYTECODE BACKEND
+        End If
+' END FAST BYTECODE BACKEND
         If ctrl = "RETURN" Then
             vAssignment retVal, env.GetValue("__return")
             ' Trace: Pop call with return value
@@ -7410,6 +7491,12 @@ Private Function CreateBoundMethod(methodNode As ASF_Map, instance As ASF_Map) A
     boundMethod.SetValue "method", methodNode
     boundMethod.SetValue "instance", instance
     Set CreateBoundMethod = boundMethod
+' BEGIN FAST BYTECODE BACKEND
+    If scopeDepth > 0 Then
+        Dim candidate As Variant: Set candidate = boundMethod
+        TrackClosure candidate
+    End If
+' END FAST BYTECODE BACKEND
 End Function
 
 ' Execute constructor
@@ -7439,7 +7526,16 @@ Private Sub ExecuteConstructor(ctorNode As ASF_Map, instance As ASF_Map, args As
         Dim body As Collection: Set body = ctorNode.GetValue("body")
         Dim j As Long
         For j = 1 To body.Count
-            Dim ctrl As String: ctrl = ExecuteStmtNode(body(j), ctorScope)
+            Dim ctrl As String
+' BEGIN FAST BYTECODE BACKEND
+            If scopeDepth > 0 And FAST_ Then
+                ctrl = RunScopeBlock(body, ctorScope): j = body.Count
+            Else
+' END FAST BYTECODE BACKEND
+            ctrl = ExecuteStmtNode(body(j), ctorScope)
+' BEGIN FAST BYTECODE BACKEND
+            End If
+' END FAST BYTECODE BACKEND
             If ctrl = "RETURN" Or ctrl = "ERR" Then Exit For
         Next j
     End If
@@ -7488,7 +7584,16 @@ Private Function ExecuteBoundMethod(methodNode As ASF_Map, instance As ASF_Map, 
         Dim body As Collection: Set body = methodNode.GetValue("body")
         Dim j As Long
         For j = 1 To body.Count
-            Dim ctrl As String: ctrl = ExecuteStmtNode(body(j), methodScope)
+            Dim ctrl As String
+' BEGIN FAST BYTECODE BACKEND
+            If scopeDepth > 0 And FAST_ Then
+                ctrl = RunScopeBlock(body, methodScope): j = body.Count
+            Else
+' END FAST BYTECODE BACKEND
+            ctrl = ExecuteStmtNode(body(j), methodScope)
+' BEGIN FAST BYTECODE BACKEND
+            End If
+' END FAST BYTECODE BACKEND
             If ctrl = "RETURN" Then
                 vAssignment retVal, methodScope.GetValue("__return")
                 ' Trace: Pop call with return value
@@ -7542,7 +7647,16 @@ Private Function ExecuteClassMethod(methodNode As ASF_Map, args As Collection, p
         Dim body As Collection: Set body = methodNode.GetValue("body")
         Dim j As Long
         For j = 1 To body.Count
-            Dim ctrl As String: ctrl = ExecuteStmtNode(body(j), methodScope)
+            Dim ctrl As String
+' BEGIN FAST BYTECODE BACKEND
+            If scopeDepth > 0 And FAST_ Then
+                ctrl = RunScopeBlock(body, methodScope): j = body.Count
+            Else
+' END FAST BYTECODE BACKEND
+            ctrl = ExecuteStmtNode(body(j), methodScope)
+' BEGIN FAST BYTECODE BACKEND
+            End If
+' END FAST BYTECODE BACKEND
             If ctrl = "RETURN" Then
                 vAssignment ExecuteClassMethod, methodScope.GetValue("__return")
                 methodScope.Pop
@@ -7589,7 +7703,16 @@ Private Sub ExecuteSuperConstructor(ctorNode As ASF_Map, instance As ASF_Map, ar
         Dim body As Collection: Set body = ctorNode.GetValue("body")
         Dim j As Long
         For j = 1 To body.Count
-            Dim ctrl As String: ctrl = ExecuteStmtNode(body(j), superScope)
+            Dim ctrl As String
+' BEGIN FAST BYTECODE BACKEND
+            If scopeDepth > 0 And FAST_ Then
+                ctrl = RunScopeBlock(body, superScope): j = body.Count
+            Else
+' END FAST BYTECODE BACKEND
+            ctrl = ExecuteStmtNode(body(j), superScope)
+' BEGIN FAST BYTECODE BACKEND
+            End If
+' END FAST BYTECODE BACKEND
             If ctrl = "RETURN" Or ctrl = "ERR" Then Exit For
         Next j
     End If
@@ -7754,6 +7877,9 @@ Public Function LoadModule(modulePath As String) As ASF_Map
     
     Dim moduleIdx As Long
     moduleIdx = compiler.CompileProgram(moduleSource, "@module:" & modulePath)
+' BEGIN FAST BYTECODE BACKEND
+    ClearFastCache
+' END FAST BYTECODE BACKEND
     
     ' Create module object
     Dim moduleObj As New ASF_Map
@@ -7784,7 +7910,15 @@ Public Function LoadModule(modulePath As String) As ASF_Map
         Dim mi As Long
         For mi = 1 To stmts.Count
             Dim ctrl As String
+' BEGIN FAST BYTECODE BACKEND
+            If scopeDepth > 0 And FAST_ Then
+                ctrl = RunScopeBlock(stmts, moduleScope): mi = stmts.Count
+            Else
+' END FAST BYTECODE BACKEND
             ctrl = ExecuteStmtNode(stmts(mi), moduleScope)
+' BEGIN FAST BYTECODE BACKEND
+            End If
+' END FAST BYTECODE BACKEND
             If ctrl = "RETURN" Or ctrl = "ERR" Then Exit For
         Next mi
         
@@ -7894,6 +8028,9 @@ Private Sub SetObjectProperty(obj As Variant, propName As Variant, propValue As 
     PopCallTrace CStr(propName), vbaParam
 End Sub
 Private Function CallObjectMethod(obj As Variant, methodName As Variant, Optional args As Collection) As Variant
+' BEGIN FAST BYTECODE BACKEND
+    If scopeDepth > 0 Then PreserveClosures
+' END FAST BYTECODE BACKEND
     Dim tmpResult As Variant
     If HasCOMPrototype(obj, CStr(methodName)) Then
         Dim prototypeInfo As ASF_Map: Set prototypeInfo = GetCOMPrototype(obj, CStr(methodName))
@@ -8155,6 +8292,7 @@ Public Property Get FastFallbackCount() As Long
     FastFallbackCount = fallbackRuns
 End Property
 Public Sub ClearFastCache()
+    Set scopePrograms = Nothing
     Set fastPrograms = Nothing
 End Sub
 Private Function TryFastProgram(ByVal idx As Long, ByVal params As Variant) As Boolean
@@ -8290,6 +8428,380 @@ Friend Sub FastPrint(ByVal values As Collection)
         If i > 1 Then text = text & ", "
         text = text & ValueToStringForPrint(values(i))
     Next i
+    If VERBOSE_ Then GLOBALS_.gRuntimeLog.Add "PRINT:" & text
     Debug.Print text
 End Sub
+' END FAST BYTECODE BACKEND
+
+' BEGIN FAST BYTECODE BACKEND
+Private Function RunScopeCode(ByVal node As ASF_Map, ByVal scope As ASF_ScopeStack, ByVal expression As Boolean, ByRef value As Variant) As String
+    ' VM-created operand descriptors are not program ASTs. Never retain their
+    ' runtime values in the compiled-node cache (or confuse recycled pointers).
+    If node.Exists("__vmTransient") Then
+        If expression Then vAssignment value, FastScopeExpression(node, scope) Else RunScopeCode = FastScopeStatement(node, scope)
+        Exit Function
+    End If
+    If scopePrograms Is Nothing Then Set scopePrograms = New Collection
+    Dim key As String: key = CStr(ObjPtr(node)) & IIf(expression, "E", "S")
+    Dim machine As ASF_FastVM
+    On Error Resume Next
+    Set machine = scopePrograms(key)
+    On Error GoTo 0
+    If machine Is Nothing Then
+        Set machine = New ASF_FastVM
+        machine.PrepareNode GLOBALS_, node, expression
+        If Not machine.Eligible Then Err.Raise 5, "ASF.ScopeBytecode", machine.Reason
+        scopePrograms.Add machine, key
+    End If
+    scopeEntries = scopeEntries + 1
+    Dim signal As String
+    Dim runner As New ASF_ScopeVM
+    runner.Execute machine, scope, Me, value, signal
+    RunScopeCode = signal
+End Function
+Friend Function FastScopeExpression(ByVal node As ASF_Map, ByVal scope As ASF_ScopeStack) As Variant
+    scopeServices = scopeServices + 1
+    Dim kind As String: kind = node.GetValue("type")
+    If kind = "VBAexpr" Then PreserveClosures
+    Dim value As Variant: vAssignment value, EvalExprNode(node, scope, True)
+    If kind = "FuncLiteral" Or kind = "AnonFunc" Then TrackClosure value
+    vAssignment FastScopeExpression, value
+End Function
+Friend Function FastScopeStatement(ByVal node As ASF_Map, ByVal scope As ASF_ScopeStack) As String
+    scopeServices = scopeServices + 1
+    Select Case CStr(node.GetValue("type"))
+        Case "Import", "Export", "Prototype": PreserveClosures
+    End Select
+    FastScopeStatement = ExecuteStmtNode(node, scope, True)
+End Function
+Friend Sub FastScopeAssign(ByVal node As ASF_Map, ByRef value As Variant, ByVal scope As ASF_ScopeStack)
+    scopeServices = scopeServices + 1
+    If IsObject(value) Then
+        PreserveClosures
+    ElseIf IsArray(value) Then
+        PreserveClosures
+    End If
+    HandleAssignment node, value, scope
+End Sub
+Friend Function FastFunctionReference(ByVal name As String, ByVal scope As ASF_ScopeStack) As Variant
+    Dim value As Variant: vAssignment value, EvalFunctionRef(name, scope)
+    TrackClosure value
+    vAssignment FastFunctionReference, value
+End Function
+Public Property Get FastScopeEntryCount() As Double
+    FastScopeEntryCount = scopeEntries
+End Property
+Public Property Get FastHostServiceCount() As Double
+    FastHostServiceCount = scopeServices
+End Property
+' END FAST BYTECODE BACKEND
+
+' BEGIN FAST BYTECODE BACKEND
+Private Function ScopeBody(ByVal statements As Collection) As ASF_FastVM
+    If scopePrograms Is Nothing Then Set scopePrograms = New Collection
+    Dim key As String: key = "B" & CStr(ObjPtr(statements))
+    Dim machine As ASF_FastVM
+    On Error Resume Next
+    Set machine = scopePrograms(key)
+    On Error GoTo 0
+    If machine Is Nothing Then
+        Dim node As ASF_Map: Set node = MakeNode("Block")
+        node.SetValue "body", statements
+        Set machine = New ASF_FastVM
+        machine.PrepareNode GLOBALS_, node, False
+        If Not machine.Eligible Then Err.Raise 5, "ASF.ScopeBody", machine.Reason
+        scopePrograms.Add machine, key
+    End If
+    Set ScopeBody = machine
+End Function
+Private Function RunScopeBlock(ByVal statements As Collection, ByVal scope As ASF_ScopeStack) As String
+    On Error GoTo Failed
+    Dim machine As ASF_FastVM: Set machine = ScopeBody(statements)
+    Dim runner As New ASF_ScopeVM, result As Variant, signal As String
+    scopeEntries = scopeEntries + 1
+    runner.Execute machine, scope, Me, result, signal
+    RunScopeBlock = signal
+    Exit Function
+Failed:
+    If VERBOSE_ Then GLOBALS_.gRuntimeLog.Add "VM statement error: " & Err.Description
+    Err.Clear: RunScopeBlock = "ERR"
+End Function
+Friend Function FastEnterCall(ByVal callNode As ASF_Map, ByVal args As Collection, ByVal caller As ASF_ScopeStack, ByRef machine As ASF_FastVM, ByRef env As ASF_ScopeStack, ByRef traceName As String, ByRef result As Variant) As Boolean
+    Dim callee As ASF_Map: Set callee = callNode.GetValue("callee")
+    Dim name As String: name = callee.GetValue("name")
+    Dim callable As Variant: vAssignment callable, caller.GetValue(name)
+    Dim body As Collection, pa As Variant, restName As String, p As Variant
+    If IsEmpty(callable) And GLOBALS_.gFuncTable.Exists(name) Then
+        p = GLOBALS_.gPrograms(CLng(GLOBALS_.gFuncTable.GetValue(name)))
+        Set body = p(1): Set pa = NamedFunctionParams(name): Set env = caller.ShareFrames
+        traceName = name
+        If UBound(p) >= 3 Then restName = CStr(p(3))
+    ElseIf IsMapValue(callable) Then
+        Dim closure As ASF_Map: Set closure = callable
+        If closure.Exists("type") Then
+            If closure.GetValue("type") = "Closure" Then
+                Set body = closure.GetValue("body"): Set pa = closure.GetValue("params"): Set env = closure.GetValue("env")
+                traceName = "<anonymous>"
+                If closure.Exists("name") Then traceName = CStr(closure.GetValue("name"))
+                If closure.Exists("restParam") Then restName = CStr(closure.GetValue("restParam"))
+            End If
+        End If
+    End If
+    If body Is Nothing Then
+        If IsEmpty(callable) Then vAssignment callable, EvalFunctionRef(name, caller)
+        If IsMapValue(callable) Then
+            Dim target As ASF_Map: Set target = callable
+            If target.Exists("type") Then
+                Select Case CStr(target.GetValue("type"))
+                    Case "Class": vAssignment result, InstantiateClass(target, args, caller)
+                    Case "BoundMethod"
+                        If Not VERBOSE_ And Not ENABLE_CALL_TRACE_ Then
+                            FastEnterCall = FastOpenMethod(target, args, caller, machine, env, traceName)
+                            Exit Function
+                        End If
+                        vAssignment result, ExecuteBoundMethod(target.GetValue("method"), target.GetValue("instance"), args, caller)
+                    Case "Method": vAssignment result, ExecuteClassMethod(target, args, caller)
+                End Select
+            End If
+        End If
+        Exit Function
+    End If
+    Set machine = ScopeBody(body)
+    PushCallTrace traceName, args
+    env.Push
+    FastBindCall env, pa, restName, args
+    scopeEntries = scopeEntries + 1
+    FastEnterCall = True
+End Function
+Private Sub FastBindCall(ByVal env As ASF_ScopeStack, ByVal pa As Variant, ByVal restParamName As String, ByVal evaluatedArgs As Collection)
+    Dim i As Long
+    Dim elm As Variant
+    Dim fc As Boolean
+    Dim emptyArgs As Long: emptyArgs = 0
+
+    If IsObject(pa) Then
+       fc = (Not pa Is Nothing)
+    Else
+       fc = Not IsEmpty(pa)
+    End If
+    If fc Then
+        For Each elm In pa
+            i = i + 1
+            If CStr(elm) = vbNullString Then emptyArgs = emptyArgs + 1
+            If i <= evaluatedArgs.Count Then
+                env.SetLocalValue CStr(elm), evaluatedArgs(i)
+            Else
+                env.SetLocalValue CStr(elm), Empty
+            End If
+        Next elm
+    End If
+
+    ' Handle rest parameters
+    If Len(restParamName) > 0 Then
+        Dim restArr() As Variant
+        Dim regularParamCount As Long
+
+        ' Count regular parameters
+        If i > 1 Then
+            regularParamCount = i
+        Else
+            regularParamCount = i - emptyArgs
+        End If
+
+        Dim totalArgCount As Long: totalArgCount = evaluatedArgs.Count
+        Dim optBase As Long: optBase = env.GetValue("__option_base")
+
+        If totalArgCount > regularParamCount Then
+            ' Check for empty params
+            If totalArgCount - regularParamCount = 1 Then
+                If IsEmpty(evaluatedArgs(regularParamCount + 1)) Then
+                    ' Return the empty array
+                    ReDim restArr(-1 To -1)
+                Else
+                    ReDim restArr(optBase To optBase)
+                    vAssignment restArr(optBase), evaluatedArgs(regularParamCount + 1)
+                End If
+            Else
+                ' Collect remaining arguments into rest array
+                Dim restCount As Long: restCount = totalArgCount - regularParamCount
+                ReDim restArr(optBase To optBase + restCount - 1)
+
+                Dim ri As Long
+                For ri = 0 To restCount - 1
+                    vAssignment restArr(optBase + ri), evaluatedArgs(regularParamCount + 1 + ri)
+                Next ri
+            End If
+        Else
+            ' No extra arguments, create empty array
+            ReDim restArr(-1 To -1)
+        End If
+
+        ' Bind rest parameter to the rest array
+        env.SetLocalValue restParamName, restArr
+    End If
+
+
+End Sub
+Friend Sub FastLeaveCall(ByVal env As ASF_ScopeStack, ByVal name As String, ByRef value As Variant, ByVal failed As Boolean)
+    If Len(name) > 0 Then PopCallTrace name, value
+    ' InvokeClosure retains its frame on failure; captured envs observe that frame.
+    If Not failed Then env.Pop
+End Sub
+Friend Sub FastCallError(ByVal name As String, ByVal description As String)
+    TraceError name, description
+    TraceError name, description
+    If VERBOSE_ Then GLOBALS_.gRuntimeLog.Add "InvokeClosure error: " & description
+End Sub
+' END FAST BYTECODE BACKEND
+
+' BEGIN FAST BYTECODE BACKEND
+Private Function BeginClosureRun(ByVal params As Variant) As ASF_Map
+    If closureRuns Is Nothing Then Set closureRuns = New Collection
+    Dim state As New ASF_Map, pool As New Collection, escaped As Boolean, item As Variant
+    If Not INJECTED_VARIABLES_ Is Nothing Then escaped = (INJECTED_VARIABLES_.Count > 0)
+    If IsArray(params) Then
+        For Each item In params
+            If IsObject(item) Then
+                escaped = True
+            ElseIf IsArray(item) Then
+                escaped = True
+            End If
+        Next item
+    ElseIf IsObject(params) Then
+        escaped = True
+    End If
+    state.SetValue "pool", pool: state.SetValue "escaped", escaped
+    closureRuns.Add state: Set BeginClosureRun = state
+End Function
+Private Sub TrackClosure(ByRef value As Variant)
+    If closureRuns Is Nothing Then Exit Sub
+    If closureRuns.Count = 0 Or Not IsObject(value) Then Exit Sub
+    If TypeName(value) <> "ASF_Map" Then Exit Sub
+    Dim closure As ASF_Map: Set closure = value
+    If Not closure.Exists("type") Then Exit Sub
+    If closure.GetValue("type") <> "Closure" And closure.GetValue("type") <> "BoundMethod" Then Exit Sub
+    Dim state As ASF_Map: Set state = closureRuns(closureRuns.Count)
+    If CBool(state.GetValue("escaped")) Then Exit Sub
+    Dim pool As Collection: Set pool = state.GetValue("pool")
+    pool.Add closure
+End Sub
+Private Sub PreserveClosures()
+    If closureRuns Is Nothing Then Exit Sub
+    If closureRuns.Count = 0 Then Exit Sub
+    Dim state As ASF_Map: Set state = closureRuns(closureRuns.Count)
+    state.SetValue "escaped", True
+    ' Stop retaining candidates before invoking foreign code, so COM finalizers
+    ' keep their reference-lifetime behavior in host-visible scopes.
+    Dim emptyPool As New Collection: state.SetValue "pool", emptyPool
+End Sub
+Private Sub FinishClosureRun(ByVal state As ASF_Map)
+    If IsObject(OUTPUT__) Then
+        state.SetValue "escaped", True
+    ElseIf IsArray(OUTPUT__) Then
+        state.SetValue "escaped", True
+    End If
+    If Not CBool(state.GetValue("escaped")) Then
+        Dim pool As Collection: Set pool = state.GetValue("pool")
+        Dim closure As ASF_Map
+        For Each closure In pool
+            If closure.GetValue("type") = "Closure" Then closure.SetValue "env", Nothing Else closure.SetValue "instance", Nothing
+            releasedClosures = releasedClosures + 1
+        Next closure
+    End If
+    closureRuns.Remove closureRuns.Count
+End Sub
+Public Property Get FastClosureReleaseCount() As Double
+    FastClosureReleaseCount = releasedClosures
+End Property
+' END FAST BYTECODE BACKEND
+
+' BEGIN FAST BYTECODE BACKEND
+Friend Function FastScopeCall(ByVal node As ASF_Map, ByVal scope As ASF_ScopeStack, ByVal id As Long) As Variant
+    scopeServices = scopeServices + 1
+    vAssignment FastScopeCall, EvalCall(node, scope, id)
+End Function
+Private Function FastArrayMethod(calleeExpr As ASF_Map, evaluated As Collection, progScope As ASF_ScopeStack, ByRef propN As String, ByRef baseValLocal As Variant, ByRef origBaseVal As Variant, ByRef tmpResult As Variant, ByVal id As Long) As Boolean
+    Select Case id
+        Case 1: FastArrayMethod = ArrMap(calleeExpr, evaluated, progScope, propN, baseValLocal, origBaseVal, tmpResult)
+        Case 2: FastArrayMethod = ArrFilter(calleeExpr, evaluated, progScope, propN, baseValLocal, origBaseVal, tmpResult)
+        Case 3: FastArrayMethod = ArrReduce(calleeExpr, evaluated, progScope, propN, baseValLocal, origBaseVal, tmpResult)
+        Case 4: FastArrayMethod = ArrSlice(calleeExpr, evaluated, progScope, propN, baseValLocal, origBaseVal, tmpResult)
+        Case 5: FastArrayMethod = ArrPush(calleeExpr, evaluated, progScope, propN, baseValLocal, origBaseVal, tmpResult)
+        Case 6: FastArrayMethod = ArrPop(calleeExpr, evaluated, progScope, propN, baseValLocal, origBaseVal, tmpResult)
+        Case 7: FastArrayMethod = ArrForeach(calleeExpr, evaluated, progScope, propN, baseValLocal, origBaseVal, tmpResult)
+        Case 8: FastArrayMethod = ArrUnique(calleeExpr, evaluated, progScope, propN, baseValLocal, origBaseVal, tmpResult)
+        Case 9: FastArrayMethod = ArrConcat(calleeExpr, evaluated, progScope, propN, baseValLocal, origBaseVal, tmpResult)
+        Case 10: FastArrayMethod = ArrShift(calleeExpr, evaluated, progScope, propN, baseValLocal, origBaseVal, tmpResult)
+        Case 11: FastArrayMethod = ArrSplice(calleeExpr, evaluated, progScope, propN, baseValLocal, origBaseVal, tmpResult)
+        Case 12: FastArrayMethod = ArrAt(calleeExpr, evaluated, progScope, propN, baseValLocal, origBaseVal, tmpResult)
+        Case 13: FastArrayMethod = ArrCopywithin(calleeExpr, evaluated, progScope, propN, baseValLocal, origBaseVal, tmpResult)
+        Case 14: FastArrayMethod = ArrEntries(calleeExpr, evaluated, progScope, propN, baseValLocal, origBaseVal, tmpResult)
+        Case 15: FastArrayMethod = ArrEvery(calleeExpr, evaluated, progScope, propN, baseValLocal, origBaseVal, tmpResult)
+        Case 16: FastArrayMethod = ArrFrom(calleeExpr, evaluated, progScope, propN, baseValLocal, origBaseVal, tmpResult)
+        Case 17: FastArrayMethod = ArrOf(calleeExpr, evaluated, progScope, propN, baseValLocal, origBaseVal, tmpResult)
+        Case 18: FastArrayMethod = ArrReverse(calleeExpr, evaluated, progScope, propN, baseValLocal, origBaseVal, tmpResult)
+        Case 19: FastArrayMethod = ArrToreversed(calleeExpr, evaluated, progScope, propN, baseValLocal, origBaseVal, tmpResult)
+        Case 20: FastArrayMethod = ArrSome(calleeExpr, evaluated, progScope, propN, baseValLocal, origBaseVal, tmpResult)
+        Case 21: FastArrayMethod = ArrWith(calleeExpr, evaluated, progScope, propN, baseValLocal, origBaseVal, tmpResult)
+        Case Else: Err.Raise 5, "ASF.FastArrayMethod", "Invalid method ID"
+    End Select
+End Function
+' END FAST BYTECODE BACKEND
+
+' BEGIN FAST BYTECODE BACKEND
+Friend Function FastEnterMember(ByVal node As ASF_Map, ByVal args As Collection, ByVal caller As ASF_ScopeStack, ByRef machine As ASF_FastVM, ByRef env As ASF_ScopeStack, ByRef traceName As String, ByRef result As Variant, ByVal methodID As Long) As Boolean
+    Dim member As ASF_Map: Set member = node.GetValue("callee")
+    Dim receiver As ASF_Map: Set receiver = member.GetValue("base")
+    Dim value As Variant: vAssignment value, caller.GetValue(CStr(receiver.GetValue("name")))
+    Dim prop As String: prop = CStr(member.GetValue("prop"))
+    If Not VERBOSE_ And Not ENABLE_CALL_TRACE_ Then
+        If IsMapValue(value) Then
+            If HasOwnFunction(value, prop) Then
+                If Not HasCOMPrototype(value, prop) Then
+                    Dim owner As ASF_Map: Set owner = value
+                    Dim method As ASF_Map: Set method = owner.GetValue(prop)
+                    If method.GetValue("type") = "BoundMethod" Then
+                        FastEnterMember = FastOpenMethod(method, args, caller, machine, env, traceName)
+                        Exit Function
+                    ElseIf method.GetValue("type") = "Closure" Then
+                        Set env = method.GetValue("env"): Set machine = ScopeBody(method.GetValue("body"))
+                        traceName = "<anonymous>"
+                        If method.Exists("name") Then traceName = CStr(method.GetValue("name"))
+                        Dim rest As String
+                        If method.Exists("restParam") Then rest = CStr(method.GetValue("restParam"))
+                        PushCallTrace traceName, args
+                        env.Push: FastBindCall env, method.GetValue("params"), rest, args
+                        env.SetLocalValue "this", value
+                        scopeEntries = scopeEntries + 1: FastEnterMember = True
+                        Exit Function
+                    End If
+                End If
+            End If
+        End If
+    End If
+    scopeServices = scopeServices + 1
+    vAssignment result, EvalCall(node, caller, methodID, args)
+End Function
+Private Function FastOpenMethod(ByVal bound As ASF_Map, ByVal args As Collection, ByVal caller As ASF_ScopeStack, ByRef machine As ASF_FastVM, ByRef env As ASF_ScopeStack, ByRef traceName As String) As Boolean
+    Dim method As ASF_Map: Set method = bound.GetValue("method")
+    Dim body As Collection: Set body = method.GetValue("body")
+    Set machine = ScopeBody(body): Set env = caller.ShareFrames
+    traceName = "<method>"
+    If method.Exists("name") Then traceName = CStr(method.GetValue("name"))
+    PushCallTrace traceName, args
+    env.Push: env.SetLocalValue "this", bound.GetValue("instance")
+    Dim params As New Collection
+    If method.Exists("params") Then Set params = method.GetValue("params")
+    FastBindCall env, params, vbNullString, args
+    scopeEntries = scopeEntries + 1: FastOpenMethod = True
+End Function
+' END FAST BYTECODE BACKEND
+
+' BEGIN FAST BYTECODE BACKEND
+Friend Sub FastStatementError(ByVal description As String)
+    If VERBOSE_ Then GLOBALS_.gRuntimeLog.Add "VM statement error: " & description
+End Sub
+Public Property Get FastScopeProgramCount() As Long
+    If Not scopePrograms Is Nothing Then FastScopeProgramCount = scopePrograms.Count
+End Property
 ' END FAST BYTECODE BACKEND
