@@ -4,3 +4,12 @@
 *.[fF][rR][mM]              -text diff
 *.[vV][bB][aA]              -text diff
 *.[dD][oO][cC][cC][lL][sS]  -text diff
+
+# Native VM tooling: CRLF working files, normalized text diffs.
+README.md text eol=crlf
+CHANGELOG.md text eol=crlf
+libreoffice/tools/build.py text eol=crlf
+Tools/thunk/** text eol=crlf
+Tools/thunk/*.cls -text
+Tools/thunk/*.bas -text
+.gitattributes text eol=crlf

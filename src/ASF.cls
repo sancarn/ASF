@@ -173,3 +173,22 @@ End Sub
 Public Function VarToASF(VarValue) As Variant
     VarToASF = VM_.VarToASF(VarValue)
 End Function
+
+' BEGIN WINDOWS NATIVE BACKEND
+' Opt-in Windows x64 C thunk backend. False keeps the reference VBA AST VM.
+' Set before Run/Execute; parsing and compilation remain in VBA.
+Public Property Let NativeExecution(ByVal enabled As Boolean)
+    VM_.NativeExecution = enabled
+End Property
+Public Property Get NativeExecution() As Boolean
+    NativeExecution = VM_.NativeExecution
+End Property
+' Diagnostic count of native entries; useful to verify benchmark routing.
+Public Property Get NativeEntryCount() As Double
+    NativeEntryCount = VM_.NativeEntryCount
+End Property
+' Required after externally mutating AST nodes obtained through GetGlobals.
+Public Sub ClearNativeCache()
+    VM_.ClearNativeCache
+End Sub
+' END WINDOWS NATIVE BACKEND

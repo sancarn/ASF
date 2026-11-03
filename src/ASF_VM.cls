@@ -27,10 +27,17 @@ Private emptyColl As New Collection
 Private COM_PROTOTYPES_ As Collection ' COM Prototype storage for monkey patching
 Private COLLECTIONS_METHOD_OVERRIDE_ As Boolean
 Private MathObj As Collection
+' BEGIN WINDOWS NATIVE BACKEND
+Private NATIVE_ As Boolean
+Private nativeBackend As ASF_Thunk
+' END WINDOWS NATIVE BACKEND
 
 ' Executes AST nodes produced by Compiler (AST).
 ' Uses Map node types and ScopeStack. Logs to gRuntimeLog.
 Public Property Set Globals(aGlobals As ASF_Globals)
+' BEGIN WINDOWS NATIVE BACKEND
+    If Not GLOBALS_ Is aGlobals Then Set nativeBackend = Nothing
+' END WINDOWS NATIVE BACKEND
     Set GLOBALS_ = aGlobals
 End Property
 Public Property Get Globals() As ASF_Globals
@@ -489,9 +496,15 @@ Public Sub RunProgramByIndex(idx As Long, Optional params As Variant = Empty)
 End Sub
 
 ' Execute a statement node (Map). Return control signals: vbnullstring, "BREAK", "CONTINUE", "RETURN", "ERR"
-Private Function ExecuteStmtNode(node As ASF_Map, progScope As ASF_ScopeStack) As String
+Private Function ExecuteStmtNode(node As ASF_Map, progScope As ASF_ScopeStack, Optional ByVal hostOnly As Boolean = False) As String
     ' a dispatcher with few locals: VBA sets up and clears every local of a procedure on each call
     On Error GoTo ErrHandler
+' BEGIN WINDOWS NATIVE BACKEND
+    If NATIVE_ And Not hostOnly Then
+        ExecuteStmtNode = ExecuteNativeStatement(node, progScope)
+        Exit Function
+    End If
+' END WINDOWS NATIVE BACKEND
     Dim tP As String: tP = node.GetValue("type")
     Select Case tP
         Case "Assign"
@@ -1327,9 +1340,15 @@ End Function
 ' ---------------------
 ' Expression evaluator: Evaluate Expr AST nodes to runtime values
 ' ---------------------
-Private Function EvalExprNode(node As ASF_Map, progScope As ASF_ScopeStack) As Variant
+Private Function EvalExprNode(node As ASF_Map, progScope As ASF_ScopeStack, Optional ByVal hostOnly As Boolean = False) As Variant
     ' a dispatcher with few locals: VBA sets up and clears every local of a procedure on each call
     If node Is Nothing Then EvalExprNode = Empty: Exit Function
+' BEGIN WINDOWS NATIVE BACKEND
+    If NATIVE_ And Not hostOnly Then
+        vAssignment EvalExprNode, EvalNativeExpression(node, progScope)
+        Exit Function
+    End If
+' END WINDOWS NATIVE BACKEND
     Select Case node.GetValue("type")
         ' most frequent kinds first: Select Case compares the strings in order
         Case "Variable"
@@ -5342,7 +5361,7 @@ End Function
 ' Runs a closure's body: env is its captured scope (shared-write), pa its parameter names,
 ' restParamName its rest parameter ("" when none)
 Private Function InvokeClosure(env As ASF_ScopeStack, ByVal pa As Variant, ByVal restParamName As String, ByVal traceName As String, _
-                               stmts As Collection, evaluatedArgs As Collection, ByVal hasThis As Boolean, ByVal thisVal As Variant) As Variant
+                               ByVal stmts As Collection, evaluatedArgs As Collection, ByVal hasThis As Boolean, ByVal thisVal As Variant) As Variant
     On Error GoTo ErrHandler
 
     ' Trace: Push call
@@ -8009,3 +8028,79 @@ End Function
 ' End VM class
 ' ---------------------
 
+
+' BEGIN WINDOWS NATIVE BACKEND
+' Experimental backend selection is explicit; unsupported hosts fail before Run.
+Public Property Let NativeExecution(ByVal enabled As Boolean)
+    If enabled Then GetNativeBackend.EnsureAvailable
+    NATIVE_ = enabled
+End Property
+Public Property Get NativeExecution() As Boolean
+    NativeExecution = NATIVE_
+End Property
+Public Property Get NativeEntryCount() As Double
+    If Not nativeBackend Is Nothing Then NativeEntryCount = nativeBackend.EntryCount
+End Property
+Public Sub ClearNativeCache()
+    Set nativeBackend = Nothing
+End Sub
+Private Function ExecuteNativeStatement(ByVal node As ASF_Map, ByVal scope As ASF_ScopeStack) As String
+    Dim backend As ASF_Thunk: Set backend = GetNativeBackend()
+    Dim unused As Variant
+    ExecuteNativeStatement = backend.Execute(Me, node, scope, False, unused)
+End Function
+Private Function EvalNativeExpression(ByVal node As ASF_Map, ByVal scope As ASF_ScopeStack) As Variant
+    Dim backend As ASF_Thunk: Set backend = GetNativeBackend()
+    Dim value As Variant
+    backend.Execute Me, node, scope, True, value
+    vAssignment EvalNativeExpression, value
+End Function
+Private Function GetNativeBackend() As ASF_Thunk
+    If nativeBackend Is Nothing Then Set nativeBackend = New ASF_Thunk
+    Set GetNativeBackend = nativeBackend
+End Function
+Friend Function ThunkExpression(ByVal node As ASF_Map, ByVal scope As ASF_ScopeStack) As Variant
+    vAssignment ThunkExpression, EvalExprNode(node, scope, True)
+End Function
+Friend Function ThunkStatement(ByVal node As ASF_Map, ByVal scope As ASF_ScopeStack) As String
+    ThunkStatement = ExecuteStmtNode(node, scope, True)
+End Function
+Friend Sub ThunkAssign(ByVal node As ASF_Map, ByRef value As Variant, ByVal scope As ASF_ScopeStack)
+    HandleAssignment node, value, scope
+End Sub
+Friend Function ThunkTruthy(ByRef value As Variant) As Boolean
+    ThunkTruthy = IsTruthy(value)
+End Function
+Friend Function ThunkUnary(ByVal op As String, ByRef value As Variant) As Variant
+    Select Case op
+        Case "!": ThunkUnary = Not IsTruthy(value)
+        Case "-": ThunkUnary = -CDbl(value)
+        Case "typeof": ThunkUnary = builtin_typeof(value)
+        Case Else: vAssignment ThunkUnary, value
+    End Select
+End Function
+' These are the same operations/coercions as EvalBinary. C handles only finite
+' Double fast paths; all other subtypes and ASF-specific operators come here.
+Friend Function ThunkBinary(ByVal op As Long, ByRef lop As Variant, ByRef rop As Variant) As Variant
+    Select Case op
+        Case 0: ThunkBinary = SafeAdd(lop, rop)
+        Case 1: ThunkBinary = lop - rop
+        Case 2: ThunkBinary = lop * rop
+        Case 3
+            If rop = 0 Then Err.Raise vbObjectError + 2001, "VM.EvalExprNode", "Division by zero" Else ThunkBinary = lop / rop
+        Case 4: ThunkBinary = (lop < rop)
+        Case 5: ThunkBinary = (lop <= rop)
+        Case 6: ThunkBinary = (lop > rop)
+        Case 7: ThunkBinary = (lop >= rop)
+        Case 8: ThunkBinary = (IIf(IsNull(lop), Empty, lop) = IIf(IsNull(rop), Empty, rop))
+        Case 9: ThunkBinary = (lop <> rop)
+        Case 10: ThunkBinary = lop Mod rop
+        Case 11: ThunkBinary = lop ^ rop
+        Case 12: ThunkBinary = CStr(lop) & CStr(rop)
+        Case 13: ThunkBinary = lop Or rop
+        Case 14: ThunkBinary = lshift(lop, rop)
+        Case 15: ThunkBinary = rshift(lop, rop)
+        Case Else: ThunkBinary = Empty
+    End Select
+End Function
+' END WINDOWS NATIVE BACKEND

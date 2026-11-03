@@ -1,0 +1,54 @@
+{
+  "office": {
+    "version": "16.0",
+    "build": 20618.0,
+    "os": "Windows (64-bit) NT 10.00"
+  },
+  "smoke": "35:2",
+  "regression_checks": 723,
+  "vba": "254/255/1",
+  "native": "254/255/1",
+  "known_baseline_failures": [
+    "FAIL host_VBA_Expressions/host_sees_array_mutation: Expected String <42>, actual String <8>"
+  ],
+  "status": "passed",
+  "dialogs": [],
+  "elapsed_seconds": 7.174946546554565,
+  "measured_at_utc": "2026-11-03T01:10:06.626914+00:00",
+  "baseline_source": null,
+  "imported_sources": {
+    "ASF.cls": "11aacba913980e19af3906bdfd7f4bbf407f0af7cf36569bf98a7952b543dedd",
+    "ASF_Compiler.cls": "cb49be9e15cb0ff16c8b70f283cb07806cfab8cd776e4b7f85b8fc429b1805ca",
+    "ASF_Globals.cls": "5958715785319685273e3aced0aaf6c9329587d6c4695c15104b71a32d349a2a",
+    "ASF_Map.cls": "cb767e50ab33d884596f3cd8b4fc72d72ffdb6206c3fad25ba9828eccf863f5f",
+    "ASF_Parser.cls": "7fa3bff9d345c063a731f257393774ebc5e202cc7115055200913b92020f5c1b",
+    "ASF_RegexEngine.cls": "0abfe7d3b69f3c3b7dd31c6f581e9f265d9e538f6c0676cebb6840e1f686911d",
+    "ASF_ScopeStack.cls": "3af8c89ec301f807e6b1806c916441c2cb94b7cdbbfc2d38f7e975e16cc92db6",
+    "ASF_Thunk.cls": "c19ff0d7cbf7fea6bf6ff6144278afea91c80058755437afdc6be6054eea46c1",
+    "ASF_ThunkProgram.cls": "413fae630a8d8825cbfd0d04c79403701178853c10e74034b81fe06f63cb33ed",
+    "ASF_VM.cls": "423549da8bcb3ac81085b3149f095a61af02b8c064bb4cf33dd5228da853168d",
+    "Lifetime.cls": "4f9060093233735df44b58d200699a8b31270359a78ac84fd11e0df0f997cdaf",
+    "ReentryProbe.cls": "c446ca196a81f6eb497b8c3ef357b19cd181fabb2a1caaa4c473683dd389d3a4",
+    "UDFunctions.cls": "bed0e4cd7c1759ed4d77897eb32c633555415cf24ff7c2c783e9cb07788b21bb",
+    "VBAcallBack.cls": "156a0837b0381c0d1ed917d15a8cdd6bde66393fe6e4dd5d47112479817426c0",
+    "VBAexpressions.cls": "e760e50f9c44adab985b2d1f59b15867aec48d9f9415148ca7f5ec636d9b330c",
+    "VBAexpressionsScope.cls": "f94f510fac2502668f04ee6f0c25fe1436b63412f83de9f223b0eabadb7f618a"
+  },
+  "commit": "527f172875740e99f09acfe8e9c39391bd674863",
+  "sources": {
+    "ASF.cls": "9031a42067992686125fb3e65a47b0a75929ad01e0390d07b67a4e658b8dabc3",
+    "ASF_Compiler.cls": "cb49be9e15cb0ff16c8b70f283cb07806cfab8cd776e4b7f85b8fc429b1805ca",
+    "ASF_Globals.cls": "5958715785319685273e3aced0aaf6c9329587d6c4695c15104b71a32d349a2a",
+    "ASF_Map.cls": "cb767e50ab33d884596f3cd8b4fc72d72ffdb6206c3fad25ba9828eccf863f5f",
+    "ASF_Parser.cls": "7fa3bff9d345c063a731f257393774ebc5e202cc7115055200913b92020f5c1b",
+    "ASF_RegexEngine.cls": "0abfe7d3b69f3c3b7dd31c6f581e9f265d9e538f6c0676cebb6840e1f686911d",
+    "ASF_ScopeStack.cls": "3af8c89ec301f807e6b1806c916441c2cb94b7cdbbfc2d38f7e975e16cc92db6",
+    "ASF_Thunk.cls": "c19ff0d7cbf7fea6bf6ff6144278afea91c80058755437afdc6be6054eea46c1",
+    "ASF_ThunkProgram.cls": "413fae630a8d8825cbfd0d04c79403701178853c10e74034b81fe06f63cb33ed",
+    "ASF_VM.cls": "423549da8bcb3ac81085b3149f095a61af02b8c064bb4cf33dd5228da853168d",
+    "UDFunctions.cls": "bed0e4cd7c1759ed4d77897eb32c633555415cf24ff7c2c783e9cb07788b21bb",
+    "VBAcallBack.cls": "156a0837b0381c0d1ed917d15a8cdd6bde66393fe6e4dd5d47112479817426c0",
+    "VBAexpressions.cls": "e760e50f9c44adab985b2d1f59b15867aec48d9f9415148ca7f5ec636d9b330c",
+    "VBAexpressionsScope.cls": "f94f510fac2502668f04ee6f0c25fe1436b63412f83de9f223b0eabadb7f618a"
+  }
+}
