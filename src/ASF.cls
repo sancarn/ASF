@@ -69,6 +69,9 @@ Public Function Compile(src As String, Optional progName As String = "@anon") As
     With Compiler_
         .SetGlobals GLOBALS_
         Compile = .CompileProgram(src, progName)
+' BEGIN FAST BYTECODE BACKEND
+        VM_.ClearFastCache
+' END FAST BYTECODE BACKEND
     End With
 End Function
 Public Function CreateEvaluator(expression As String) As VBAexpressions
@@ -90,6 +93,9 @@ Private Sub INIT_()
     GLOBALS_.ASF_InitGlobals
     Set Compiler_ = New ASF_Compiler
     Set VM_ = New ASF_VM
+' BEGIN FAST BYTECODE BACKEND
+    VM_.FastOptimizations = True
+' END FAST BYTECODE BACKEND
     VM_.verbose = False
     VM_.EnableCallTrace = False
     VM_.AppAccess = False
@@ -192,3 +198,35 @@ Public Sub ClearNativeCache()
     VM_.ClearNativeCache
 End Sub
 ' END WINDOWS NATIVE BACKEND
+
+' BEGIN FAST BYTECODE BACKEND
+' Experimental whole-program bytecode selection. Unsupported programs run the AST backend.
+Public Property Let FastExecution(ByVal enabled As Boolean)
+    VM_.FastExecution = enabled
+End Property
+Public Property Get FastExecution() As Boolean
+    FastExecution = VM_.FastExecution
+End Property
+Public Property Let FastOptimizations(ByVal enabled As Boolean)
+    VM_.FastOptimizations = enabled
+End Property
+Public Property Get FastOptimizations() As Boolean
+    FastOptimizations = VM_.FastOptimizations
+End Property
+Public Property Get LastExecutionBackend() As String
+    LastExecutionBackend = VM_.LastExecutionBackend
+End Property
+Public Property Get FastFallbackReason() As String
+    FastFallbackReason = VM_.FastFallbackReason
+End Property
+Public Property Get FastRunCount() As Long
+    FastRunCount = VM_.FastRunCount
+End Property
+Public Property Get FastFallbackCount() As Long
+    FastFallbackCount = VM_.FastFallbackCount
+End Property
+' Call after externally mutating GetGlobals' AST/function tables. Compile invalidates automatically.
+Public Sub ClearFastCache()
+    VM_.ClearFastCache
+End Sub
+' END FAST BYTECODE BACKEND

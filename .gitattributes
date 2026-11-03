@@ -13,3 +13,5 @@ Tools/thunk/** text eol=crlf
 Tools/thunk/*.cls -text
 Tools/thunk/*.bas -text
 .gitattributes text eol=crlf
+Tools/bytecode/** text eol=crlf
+Tools/bytecode/*.bas -text

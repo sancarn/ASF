@@ -27,6 +27,13 @@ Private emptyColl As New Collection
 Private COM_PROTOTYPES_ As Collection ' COM Prototype storage for monkey patching
 Private COLLECTIONS_METHOD_OVERRIDE_ As Boolean
 Private MathObj As Collection
+' BEGIN FAST BYTECODE BACKEND
+Private FAST_ As Boolean
+Private FAST_OPTIMIZE_ As Boolean
+Private fastPrograms As Collection
+Private lastBackend As String, fastReason As String
+Private fastRuns As Long, fallbackRuns As Long
+' END FAST BYTECODE BACKEND
 ' BEGIN WINDOWS NATIVE BACKEND
 Private NATIVE_ As Boolean
 Private nativeBackend As ASF_Thunk
@@ -38,6 +45,9 @@ Public Property Set Globals(aGlobals As ASF_Globals)
 ' BEGIN WINDOWS NATIVE BACKEND
     If Not GLOBALS_ Is aGlobals Then Set nativeBackend = Nothing
 ' END WINDOWS NATIVE BACKEND
+' BEGIN FAST BYTECODE BACKEND
+    If Not GLOBALS_ Is aGlobals Then Set fastPrograms = Nothing
+' END FAST BYTECODE BACKEND
     Set GLOBALS_ = aGlobals
 End Property
 Public Property Get Globals() As ASF_Globals
@@ -433,6 +443,15 @@ End Function
 
 Public Sub RunProgramByIndex(idx As Long, Optional params As Variant = Empty)
     If idx < 1 Or idx > GLOBALS_.gPrograms.Count Then Exit Sub
+' BEGIN FAST BYTECODE BACKEND
+    lastBackend = "VBA AST"
+    If NATIVE_ Then lastBackend = "C thunk"
+    If FAST_ Then
+        If TryFastProgram(idx, params) Then Exit Sub
+        fallbackRuns = fallbackRuns + 1
+        lastBackend = "VBA fallback"
+    End If
+' END FAST BYTECODE BACKEND
     Dim p As Variant: p = GLOBALS_.gPrograms(idx)
     Dim progName As String: progName = p(0)
     Dim stmts As Collection: Set stmts = p(1)
@@ -8032,7 +8051,10 @@ End Function
 ' BEGIN WINDOWS NATIVE BACKEND
 ' Experimental backend selection is explicit; unsupported hosts fail before Run.
 Public Property Let NativeExecution(ByVal enabled As Boolean)
-    If enabled Then GetNativeBackend.EnsureAvailable
+    If enabled Then
+        GetNativeBackend.EnsureAvailable
+        FAST_ = False
+    End If
     NATIVE_ = enabled
 End Property
 Public Property Get NativeExecution() As Boolean
@@ -8104,3 +8126,170 @@ Friend Function ThunkBinary(ByVal op As Long, ByRef lop As Variant, ByRef rop As
     End Select
 End Function
 ' END WINDOWS NATIVE BACKEND
+
+' BEGIN FAST BYTECODE BACKEND
+Public Property Let FastExecution(ByVal enabled As Boolean)
+    FAST_ = enabled
+    If enabled Then NATIVE_ = False
+End Property
+Public Property Get FastExecution() As Boolean
+    FastExecution = FAST_
+End Property
+Public Property Let FastOptimizations(ByVal enabled As Boolean)
+    FAST_OPTIMIZE_ = enabled
+    ClearFastCache
+End Property
+Public Property Get FastOptimizations() As Boolean
+    FastOptimizations = FAST_OPTIMIZE_
+End Property
+Public Property Get LastExecutionBackend() As String
+    LastExecutionBackend = lastBackend
+End Property
+Public Property Get FastFallbackReason() As String
+    FastFallbackReason = fastReason
+End Property
+Public Property Get FastRunCount() As Long
+    FastRunCount = fastRuns
+End Property
+Public Property Get FastFallbackCount() As Long
+    FastFallbackCount = fallbackRuns
+End Property
+Public Sub ClearFastCache()
+    Set fastPrograms = Nothing
+End Sub
+Private Function TryFastProgram(ByVal idx As Long, ByVal params As Variant) As Boolean
+    fastReason = vbNullString
+    If VERBOSE_ Or ENABLE_CALL_TRACE_ Then fastReason = "verbose/call-trace host semantics": Exit Function
+    If Not INJECTED_VARIABLES_ Is Nothing Then
+        If INJECTED_VARIABLES_.Count > 0 Then fastReason = "injected bindings": Exit Function
+    End If
+    If Not COM_PROTOTYPES_ Is Nothing Then
+        If COM_PROTOTYPES_.Count > 0 Then fastReason = "registered COM prototypes": Exit Function
+    End If
+    Dim args As Variant, i As Long
+    args = Array()
+    If Not IsEmpty(params) Then
+        If Not IsArray(params) Then fastReason = "non-array arguments": Exit Function
+        args = params
+        For i = LBound(args) To UBound(args)
+            If IsObject(args(i)) Then
+                If TypeName(args(i)) <> "Collection" Then fastReason = "opaque object argument": Exit Function
+            End If
+
+        Next i
+    End If
+    If fastPrograms Is Nothing Then Set fastPrograms = New Collection
+    Dim machine As ASF_FastVM
+    On Error Resume Next
+    Set machine = fastPrograms(CStr(idx))
+    On Error GoTo 0
+    If machine Is Nothing Then
+        Set machine = New ASF_FastVM
+        machine.Prepare GLOBALS_, idx, FAST_OPTIMIZE_
+        fastPrograms.Add machine, CStr(idx)
+    End If
+    If Not machine.Eligible Then fastReason = machine.Reason: Exit Function
+    ' Complete rejection before coercing arguments: fallback must not repeat
+    ' observable collection/host conversion work.
+    For i = LBound(args) To UBound(args)
+        If CAST_INJECTED_VARIABLES_ And Not APPLICATION_ACCESS_ Then
+            vAssignment args(i), CastInjectedVar(args(i))
+        ElseIf IsArray(args(i)) Then
+            args(i) = ArrayToASF2(args(i))
+        End If
+    Next i
+    lastBackend = "Array bytecode": fastRuns = fastRuns + 1
+    Dim result As Variant
+    If machine.Execute(result, args, Me) Then vAssignment OUTPUT__, result
+    TryFastProgram = True
+End Function
+' END FAST BYTECODE BACKEND
+
+' BEGIN FAST BYTECODE BACKEND
+' Host services consume already evaluated values. They never traverse the
+' program AST. The whitelist in ASF_Bytecode excludes callback/writeback methods.
+Friend Function FastMember(ByRef receiver As Variant, ByVal member As String, ByVal arguments As Collection, ByVal isCall As Boolean) As Variant
+    Dim scope As New ASF_ScopeStack, callee As ASF_Map, literal As ASF_Map, node As ASF_Map
+    Set literal = MakeNode("Literal"): literal.SetValue "value", receiver
+    Set callee = MakeNode("Member"): callee.SetValue "base", literal: callee.SetValue "prop", member
+    scope.Push: scope.SetValue "__option_base", 1
+    If Not isCall Then
+        vAssignment FastMember, EvalMemberNode(callee, scope)
+    Else
+        Dim value As Variant, original As Variant, prop As String
+        vAssignment original, receiver: prop = LCase$(member)
+        EvalMethodCall callee, arguments, scope, prop, receiver, original, value
+        vAssignment FastMember, value
+    End If
+End Function
+Friend Function FastBuiltin(ByVal id As Long, ByVal arguments As Collection) As Variant
+    Dim scope As New ASF_ScopeStack, node As ASF_Map, value As Variant
+    scope.Push: scope.SetValue "__option_base", 1
+    Dim name As String
+    Select Case id
+        Case 1: name = "range"
+        Case 2: name = "flatten"
+        Case 3: name = "clone"
+        Case 4: name = "isarray"
+        Case 5: name = "isnumeric"
+    End Select
+    Set node = MakeNode("Call")
+    If (name = "clone" Or name = "flatten") And arguments.Count > 0 Then
+        If name = "clone" Then
+            vAssignment value, builtin_clone(arguments(arguments.Count), scope)
+        ElseIf arguments.Count > 2 Then
+            vAssignment value, builtin_flatten(arguments(arguments.Count), scope, arguments(2))
+        Else
+            vAssignment value, builtin_flatten(arguments(arguments.Count), scope)
+        End If
+    Else
+        EvalNamedBuiltin name, node, arguments, scope, value
+    End If
+    vAssignment FastBuiltin, value
+End Function
+Friend Function FastType(ByRef value As Variant) As String
+    FastType = builtin_typeof(value)
+End Function
+' END FAST BYTECODE BACKEND
+
+' BEGIN FAST BYTECODE BACKEND
+Friend Function FastString(ByRef value As Variant, ByVal literal As Boolean) As String
+    If literal Then
+        FastString = CStr(value)
+    ElseIf IsArray(value) Or TypeName(value) = "ASF_Map" Then
+        FastString = ValueToStringForPrint(value)
+    ElseIf IsNull(value) Then
+        FastString = "null"
+    ElseIf Not IsEmpty(value) Then
+        FastString = CStr(value)
+    End If
+End Function
+Friend Sub FastWrite(ByRef root As Variant, ByRef value As Variant, ByVal parts As Collection, ByVal indices As Collection)
+    Dim scope As New ASF_ScopeStack, node As ASF_Map, child As ASF_Map, literal As ASF_Map, part As Variant, i As Long
+    scope.Push: scope.SetValue "__option_base", 1: scope.SetValue "#root", root
+    Set node = MakeNode("Variable"): node.SetValue "name", "#root"
+    For Each part In parts
+        Set child = MakeNode(CStr(part(0))): child.SetValue "base", node
+        If part(0) = "Member" Then
+            child.SetValue "prop", part(1)
+        Else
+            i = i + 1: Set literal = MakeNode("Literal"): literal.SetValue "value", indices(i)
+            child.SetValue "index", literal
+        End If
+        Set node = child
+    Next part
+    HandleAssignment node, value, scope
+    vAssignment root, scope.GetValue("#root")
+End Sub
+' END FAST BYTECODE BACKEND
+
+' BEGIN FAST BYTECODE BACKEND
+Friend Sub FastPrint(ByVal values As Collection)
+    Dim value As Variant, text As String, i As Long
+    For i = 1 To values.Count
+        If i > 1 Then text = text & ", "
+        text = text & ValueToStringForPrint(values(i))
+    Next i
+    Debug.Print text
+End Sub
+' END FAST BYTECODE BACKEND

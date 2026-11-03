@@ -1,6 +1,7 @@
 Attribute VB_Name = "ThunkProbe"
 Option Explicit
 Public NativeDefault As Boolean
+Public FastDefault As Boolean
 Private checks As Long
 
 Public Function ExistingSuite(ByVal native As Boolean) As String
@@ -163,3 +164,26 @@ Private Sub ReentryCases()
         Set probe = Nothing: Set engine = Nothing
     Next native
 End Sub
+
+Public Function FastSmoke() As String
+    On Error GoTo Failed
+    Dim engine As New ASF, idx As Long
+    engine.FastExecution = True
+    idx = engine.Compile("fun fib(n){if(n<2){return n;};return fib(n-1)+fib(n-2);};return fib(14);")
+    engine.Run idx
+    FastSmoke = CStr(engine.OUTPUT_) & ":" & engine.LastExecutionBackend & ":" & engine.FastFallbackReason
+    Exit Function
+Failed:
+    FastSmoke = "ERROR " & Err.Number & " " & Err.Description
+End Function
+
+Public Function FastSuite() As String
+    NativeDefault = False: FastDefault = True
+    FastTests.BytecodeRuns = 0: FastTests.FallbackRuns = 0: FastTests.NotRun = 0
+    TestRunner.RunAllTests
+    FastSuite = TestRunner.ThunkSuiteResult
+    FastDefault = False
+End Function
+Public Function FastRoutes() As String
+    FastRoutes = FastTests.BytecodeRuns & "/" & FastTests.FallbackRuns & "/" & FastTests.NotRun
+End Function

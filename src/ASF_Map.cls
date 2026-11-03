@@ -182,3 +182,20 @@ Private Sub vAssignment(ByRef var As Variant, ByRef vValue As Variant)
         var = vValue
     End If
 End Sub
+
+' Speculative per-instruction position cache. Validate the key on every hit:
+' callers can reuse a site for different maps and Remove compacts positions.
+Friend Function FastGetValue(ByVal key As String, ByRef position As Long) As Variant
+    If position >= 0 And position <= pItems.index Then
+        If pKeys(position) = key Then
+            vAssignment FastGetValue, pItems.Storage(position)
+            Exit Function
+        End If
+    End If
+    position = GetKeyIndex(key)
+    If position >= 0 Then
+        vAssignment FastGetValue, pItems.Storage(position)
+    Else
+        Set FastGetValue = Nothing
+    End If
+End Function

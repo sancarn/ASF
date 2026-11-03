@@ -318,3 +318,10 @@ engine.Run pid, ThisWorkbook.Sheets(1)
 [📚 Documentation](docs/Language%20reference.md) • [🐛 Report Bug](https://github.com/ECP-Solutions/ASF/issues) • [💡 Request Feature](https://github.com/ECP-Solutions/ASF/issues) • [⭐ Star on GitHub](https://github.com/ECP-Solutions/ASF)
 
 </div>
+
+## Experimental array bytecode branch
+
+The separate `experiment/garcia-bytecode` branch explores WS Garcia's backend
+proposal and compares it with the AST and native thunk engines. It is opt-in and
+incomplete; closures, classes and other unsupported programs use whole-program
+fallback. See [coverage, setup and benchmarks](Tools/bytecode/README.md).

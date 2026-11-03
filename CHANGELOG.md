@@ -4,6 +4,23 @@ All notable changes for ASF. This file combines the release notes from the proje
 
 ## [Unreleased]
 
+### 2026-11-03: Garcia bytecode experiment
+
+- **WIP**: opt-in `FastExecution` array bytecode backend with numeric variable
+  bindings, explicit named-call frames, folding/fusion, map read caches, arrays,
+  object reads/writes, iteration, switch, rest/spread/destructuring and try/catch.
+  Supported COM/builtin services bridge to VBA. This is an incomplete five-phase
+  attempt: closures, classes, modules and scope-sensitive host features retain
+  whole-program fallback, with public routing/rejection diagnostics.
+- **Installation change**: this branch requires `ASF_Bytecode.cls` and
+  `ASF_FastVM.cls` even when FastExecution is off. Existing Run/Compile APIs and
+  default AST behavior are retained. Deep recursion in opt-in bytecode mode uses
+  explicit frames and can outlast the reference interpreter's VBA stack limit.
+- **DEV**: three-engine Excel benchmarks for 22 workloads, cold and warm phases,
+  a combined-optimization ablation, differential tests and fallback accounting.
+  The existing LibreOffice AST build excludes the unported experimental backend.
+  See `Tools/bytecode/README.md` for exact coverage and reproducible measurements.
+
 ### 2026-11-03: native/VBA benchmark branch
 
 - **DEV**: eight-workload Excel benchmark with three phases, seven rotating

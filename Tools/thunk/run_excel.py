@@ -24,7 +24,7 @@ ROOT = HERE.parents[1]
 def write(path, text):
     path.write_bytes(text.replace('\r\n', '\n').replace('\n', '\r\n').encode('utf-8'))
 
-def worker(folder, smoke, baseline=False, benchmark=False):
+def worker(folder, smoke, baseline=False, benchmark=False, garcia=False):
     import win32com.client
     import win32process
     app = book = None
@@ -53,6 +53,11 @@ def worker(folder, smoke, baseline=False, benchmark=False):
             result['status'] = 'baseline'
             print('Pre-change source: '+result['vba'], flush=True)
             return
+        result['fast_smoke'] = str(app.Run('ThunkProbe.FastSmoke'))
+        if result['fast_smoke'] != '377:Array bytecode:': raise RuntimeError(result['fast_smoke'])
+        result['fast_differential'] = str(app.Run('FastTests.Run'))
+        print('Fast differential: '+result['fast_differential'],flush=True)
+        if result['fast_differential'].startswith('ERROR'): raise RuntimeError(result['fast_differential'])
         result['smoke'] = app.Run('ThunkProbe.Smoke')
         print(result['smoke'], flush=True)
         if not result['smoke'].startswith('35:'):
@@ -73,19 +78,36 @@ def worker(folder, smoke, baseline=False, benchmark=False):
             if result['vba'] != result['native'] or failures['vba'] != failures['native'] or failures['vba'] not in ([], known):
                 raise RuntimeError('Existing suite parity/regression failed: '+str(failures))
             result['known_baseline_failures'] = failures['vba']
-        if benchmark:
+            result['fast'] = app.Run('ThunkProbe.FastSuite')
+            shutil.copy2(folder/'TestRunner.log', folder/'fast.log')
+            result['fast_routes'] = str(app.Run('ThunkProbe.FastRoutes'))
+            fast_failures = [re.sub(r' \(\d+ ms\)$','',line) for line in (folder/'fast.log').read_text().splitlines() if line.startswith('FAIL ')]
+            print('fast: '+str(result['fast'])+' routes '+result['fast_routes'],flush=True)
+            if result['fast'] != result['vba'] or fast_failures != failures['vba']:
+                raise RuntimeError('Fast suite parity failed: '+str(fast_failures))
+        if benchmark or garcia:
             cases = ['Arithmetic', 'Predicate', 'Strings', 'COM collection', 'For loop', 'While + branches', 'Fibonacci', 'Array callback']
+            if garcia: cases = json.loads((ROOT/'Tools/bytecode/cases.json').read_text())
+            engines = ['VBA', 'Thunk', 'Bytecode'] if garcia else ['VBA', 'Thunk']
+            n_engines = len(engines)
             phases = ['Create + compile', 'Create + compile + first run', 'Warm run']
             result['benchmark'] = dict(cases=cases, phases=phases, samples=[], timer='QueryPerformanceCounter', rounds=7, target_batch_seconds=.03,
-                                       engines=['VBA', 'Thunk'], cpu=__import__('platform').processor(), benchmark_source_sha256=hashlib.sha256((folder/'Benchmark.bas').read_bytes()).hexdigest())
+                                       engines=engines, cpu=__import__('platform').processor(), benchmark_source_sha256=hashlib.sha256((folder/'Benchmark.bas').read_bytes()).hexdigest())
             counts = {}
             def measure(engine, case, phase, count):
-                value = str(app.Run('ThunkBenchmark.Measure', bool(engine), case, phase, count))
+                value = str(app.Run('ThunkBenchmark.Measure', engine if garcia else bool(engine), case, phase, count))
                 if value.startswith('ERROR'): raise RuntimeError(f'engine={engine} case={case} phase={phase} count={count}: {value}')
+                if garcia:
+                    value, route, reason = value.split('|',2)
+                    routes = result['benchmark'].setdefault('routes',{})
+                    key = str(engine)+':'+str(case)
+                    entry = dict(route=route,reason=reason)
+                    if key in routes and routes[key] != entry: raise RuntimeError('Execution route changed: '+key)
+                    routes[key] = entry
                 return float(value)
             for case in range(len(cases)):
                 for phase in range(3):
-                    for engine in range(2):
+                    for engine in range(n_engines):
                         count = 1
                         while measure(engine,case,phase,count) < .03 and count < 16384:
                             count *= 2
@@ -93,12 +115,21 @@ def worker(folder, smoke, baseline=False, benchmark=False):
             for round_ in range(7):
                 for case in range(len(cases)):
                     for phase in range(3):
-                        for offset in range(2):
-                            engine = (round_ + case + phase + offset) % 2
+                        for offset in range(n_engines):
+                            engine = (round_ + case + phase + offset) % n_engines
                             count = counts[engine,case,phase]
                             seconds = measure(engine,case,phase,count)
                             result['benchmark']['samples'].append(dict(round=round_,case=case,phase=phase,engine=engine,count=count,seconds=seconds))
                 print('Benchmark round '+str(round_+1)+'/7 complete',flush=True)
+            if garcia:
+                result['benchmark']['ablation'] = []
+                for case in (0,4,5,6,12,19):
+                    count = counts[2,case,2]
+                    for round_ in range(7):
+                        for offset in range(2):
+                            engine = 2 + (round_ + offset) % 2
+                            seconds = measure(engine,case,2,count)
+                            result['benchmark']['ablation'].append(dict(case=case,engine=engine,round=round_,count=count,seconds=seconds))
         result['status'] = 'passed'
     except Exception as exc:
         result.update(status='failed', error=repr(exc))
@@ -110,10 +141,10 @@ def worker(folder, smoke, baseline=False, benchmark=False):
         finally:
             if app is not None: app.Quit()
 
-def prepare(folder, baseline=False, benchmark=False):
+def prepare(folder, baseline=False, benchmark=False, garcia=False):
     for path in (ROOT/'src').glob('*.cls'):
         if baseline:
-            if path.stem in ('ASF_Thunk', 'ASF_ThunkProgram'): continue
+            if path.stem in ('ASF_Thunk', 'ASF_ThunkProgram', 'ASF_Bytecode', 'ASF_FastVM'): continue
             source = subprocess.check_output(['git','show','527f172:src/'+path.name],cwd=ROOT).decode('cp1252').replace('\r\n','\n')
             # Necessary Excel compilation repair only, with no execution change.
             source = source.replace('                               stmts As Collection, evaluatedArgs As Collection, ByVal hasThis As Boolean',
@@ -122,10 +153,12 @@ def prepare(folder, baseline=False, benchmark=False):
             source = path.read_bytes().decode('cp1252').replace('\r\n', '\n')
         if path.stem == 'ASF' and not baseline:
             source = source.replace('    Set VM_.Globals = GLOBALS_\nEnd Sub',
-                                    '    Set VM_.Globals = GLOBALS_\n    VM_.NativeExecution = ThunkProbe.NativeDefault\nEnd Sub', 1)
+                                    '    Set VM_.Globals = GLOBALS_\n    VM_.NativeExecution = ThunkProbe.NativeDefault\n    VM_.FastExecution = ThunkProbe.FastDefault\nEnd Sub', 1)
+        if path.stem == 'ASF' and not baseline:
+            source = source.replace('            vAssignment OUTPUT__, .OUTPUT_', '            FastTests.RecordRoute VM_\n            vAssignment OUTPUT__, .OUTPUT_')
         # Preserve source encoding; the VBE imports ANSI modules.
         (folder/path.name).write_bytes(source.replace('\n','\r\n').encode('cp1252'))
-    if benchmark: write(folder/'Benchmark.bas',(HERE/'benchmark/Benchmark.bas').read_text())
+    if benchmark or garcia: write(folder/'Benchmark.bas',((ROOT/'Tools/bytecode/Benchmark.bas') if garcia else (HERE/'benchmark/Benchmark.bas')).read_text())
     runner = (ROOT/'test/TestRunner.bas').read_text(encoding='cp1252')
     runner += '\nPublic Function ThunkSuiteResult() As String\n ThunkSuiteResult = pPassed & "/" & pRun & "/" & pFailures.Count\nEnd Function\n'
     (folder/'TestRunner.bas').write_bytes(runner.replace('\n','\r\n').encode('cp1252'))
@@ -133,6 +166,7 @@ def prepare(folder, baseline=False, benchmark=False):
     if baseline: probe = probe[:probe.index('Public Function Smoke()')]
     write(folder/'Probe.bas', probe)
     if not baseline:
+        write(folder/'FastTests.bas', (HERE/'FastTests.bas').read_text())
         for helper in HERE.glob('*.cls'): write(folder/helper.name, helper.read_text())
     # Test fixtures expected by the repository's existing suite.
     for path in (ROOT/'test').rglob('*.vas'):
@@ -149,7 +183,7 @@ Public Function HostCheckSecondNestedElement(arr As Variant) As String
 End Function
 ''')
 
-def supervise(output, smoke=False, baseline=False, benchmark=False):
+def supervise(output, smoke=False, baseline=False, benchmark=False, garcia=False):
     import psutil
     import win32con
     import win32gui
@@ -175,7 +209,7 @@ def supervise(output, smoke=False, baseline=False, benchmark=False):
     started = time.time()
     with tempfile.TemporaryDirectory(prefix='asf-thunk-test-') as temp:
         folder = Path(temp)
-        prepare(folder, baseline, benchmark)
+        prepare(folder, baseline, benchmark, garcia)
         write(folder/'original-pids.json',json.dumps(sorted(original_pids)))
         try:
             for path, name, value in settings:
@@ -190,7 +224,7 @@ def supervise(output, smoke=False, baseline=False, benchmark=False):
                     saved.append(dict(path=path,name=name,key_existed=existed,present=present,value=old,kind=kind))
                     winreg.SetValueEx(key,name,0,winreg.REG_DWORD,value)
             write(output/'settings-before.json',json.dumps(saved,indent=2))
-            process = subprocess.Popen([sys.executable,str(Path(__file__)),'--worker',str(folder)]+(['--smoke'] if smoke else [])+(['--baseline'] if baseline else [])+(['--benchmark'] if benchmark else []))
+            process = subprocess.Popen([sys.executable,str(Path(__file__)),'--worker',str(folder)]+(['--smoke'] if smoke else [])+(['--baseline'] if baseline else [])+(['--benchmark'] if benchmark else [])+(['--garcia'] if garcia else []))
             deadline = time.monotonic() + 240
             while process.poll() is None:
                 if (folder/'pid').exists(): office_pid = int((folder/'pid').read_text())
@@ -225,12 +259,13 @@ def supervise(output, smoke=False, baseline=False, benchmark=False):
             result.update(dialogs=dialogs, elapsed_seconds=time.time()-started,
                           measured_at_utc=__import__('datetime').datetime.now(__import__('datetime').timezone.utc).isoformat(),
                           baseline_source='527f172 + private ByVal compilation repair' if baseline else None,
+                          test_sources={p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in folder.glob('*.bas')},
                           imported_sources={p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in folder.glob('*.cls')},
                           commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
                           sources={p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in (ROOT/'src').glob('*.cls')})
             if dialogs: result['status'] = 'failed'
             write(output/'results.json',json.dumps(result,indent=2))
-            if process.returncode or result['status'] not in ('passed','baseline'): raise RuntimeError(str(result))
+            if process.returncode or result['status'] not in ('passed','baseline'): raise RuntimeError(str(result.get('error', result.get('status'))))
         finally:
             cleanup_error = None
             try:
@@ -266,7 +301,8 @@ if __name__ == '__main__':
     parser.add_argument('--smoke',action='store_true')
     parser.add_argument('--baseline',action='store_true')
     parser.add_argument('--benchmark',action='store_true')
+    parser.add_argument('--garcia',action='store_true')
     parser.add_argument('--output',type=Path,default=HERE/'results/latest')
     args = parser.parse_args()
-    if args.worker: worker(args.worker,args.smoke,args.baseline,args.benchmark)
-    else: supervise(args.output,args.smoke,args.baseline,args.benchmark)
+    if args.worker: worker(args.worker,args.smoke,args.baseline,args.benchmark,args.garcia)
+    else: supervise(args.output,args.smoke,args.baseline,args.benchmark,args.garcia)
